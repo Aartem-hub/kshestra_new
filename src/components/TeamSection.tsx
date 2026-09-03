@@ -55,10 +55,18 @@ const getInitials = (name: string) => {
 export const TeamSection: React.FC = () => {
   const [guardians, setGuardians] = useState<TeamMember[]>([]);
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
+  const [coloredMemberIds, setColoredMemberIds] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setGuardians(StorageService.getGuardians());
   }, []);
+
+  const toggleMemberColor = (memberId: string) => {
+    setColoredMemberIds(prev => ({
+      ...prev,
+      [memberId]: !prev[memberId]
+    }));
+  };
 
   const handleImageError = (memberId: string, e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.currentTarget;
@@ -111,6 +119,7 @@ export const TeamSection: React.FC = () => {
             const candidates = getMemberImageCandidates(member);
             const initialSrc = candidates[0] || '/assets/Kshestra Logo PNG.png';
             const isFailed = failedImages[member.id];
+            const isColored = !!coloredMemberIds[member.id];
 
             return (
               <motion.div
@@ -122,8 +131,12 @@ export const TeamSection: React.FC = () => {
                 className="bg-[#FFFFFF] border border-[#3A2B27]/15 rounded-xs overflow-hidden flex flex-col justify-between hover:border-[#8A8E3E] hover:shadow-md transition-all group"
               >
                 <div>
-                  {/* 1:1 Square Portrait Photo OR Trustee Archival Plate */}
-                  <div className="relative aspect-square w-full bg-[#3A2B27] overflow-hidden flex items-center justify-center">
+                  {/* 1:1 Square Portrait Photo OR Trustee Archival Plate - Click to color on mobile */}
+                  <div 
+                    onClick={() => toggleMemberColor(member.id)}
+                    className="cursor-pointer select-none relative aspect-square w-full bg-[#3A2B27] overflow-hidden flex items-center justify-center"
+                    title="Click/Tap to view in color"
+                  >
                     
                     {!isFailed ? (
                       <img
@@ -131,7 +144,7 @@ export const TeamSection: React.FC = () => {
                         alt={member.name}
                         data-attempt="0"
                         onError={(e) => handleImageError(member.id, e)}
-                        className="w-full h-full object-cover object-[center_top] grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
+                        className={`w-full h-full object-cover object-[center_top] ${isColored ? 'grayscale-0' : 'grayscale'} contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500`}
                         referrerPolicy="no-referrer"
                       />
                     ) : (
@@ -169,7 +182,7 @@ export const TeamSection: React.FC = () => {
                     <div className="text-[10px] font-mono uppercase tracking-wider text-[#8A8E3E] font-bold line-clamp-1">
                       {member.role}
                     </div>
-                    <h3 className="font-gambetta text-lg sm:text-xl font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors leading-snug">
+                    <h3 className="font-gambetta text-lg sm:text-xl font-bold text-[#3A2B27] group-hover:text-[#471319] transition-colors leading-snug">
                       {member.name}
                     </h3>
                   </div>

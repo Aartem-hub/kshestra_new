@@ -93,7 +93,15 @@ export const StorageService = {
   getGallery: (): Artwork[] => {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.GALLERY);
-      return data ? JSON.parse(data) : INITIAL_GALLERY_ITEMS;
+      if (!data) return INITIAL_GALLERY_ITEMS;
+      const parsed: Artwork[] = JSON.parse(data);
+      return parsed.map(item => {
+        const init = INITIAL_GALLERY_ITEMS.find(i => i.id === item.id);
+        if (init?.eventGallery && !item.eventGallery) {
+          return { ...item, eventGallery: init.eventGallery };
+        }
+        return item;
+      });
     } catch {
       return INITIAL_GALLERY_ITEMS;
     }

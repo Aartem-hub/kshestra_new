@@ -85,8 +85,8 @@
   :root {
     --color-charcoal: #3A2B27;
     --color-charcoal-muted: #725C54;
-    --color-terracotta: #5C1D24;
-    --color-terracotta-dark: #431319;
+    --color-terracotta: #471319;
+    --color-terracotta-dark: #471319;
     --color-moss: #8A8E3E;
     --color-ochre: #8A8E3E;
     --color-sanctuary: #FFF5E9;
@@ -145,7 +145,7 @@
   padding-top: 4px;
   padding-right: 14px;
   padding-bottom: 2px;
-  color: #5C1D24;
+  color: #471319;
   font-weight: 700;
 }
 

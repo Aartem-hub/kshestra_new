@@ -48,18 +48,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="max-w-7xl mx-auto space-y-10 relative z-10">
         
         {/* Top Eyebrow Strip */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#3A2B27]/15 pb-4 text-xs font-mono text-[#725C54]">
-          <div className="flex items-center gap-3">
-            <span className="px-2.5 py-0.5 bg-[#5C1D24] text-[#FFF5E9] font-bold tracking-widest uppercase text-[10px] rounded-xs">
-              EST. 2026 · A NON-PROFIT CULTURAL TRUST
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#3A2B27]/15 pb-4 text-xs font-mono text-[#725C54]">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <span className="px-2.5 py-1 bg-[#471319] text-[#FFF5E9] font-bold tracking-wider uppercase text-[10px] sm:text-[11px] rounded-xs inline-flex items-center gap-1.5 shrink-0 max-w-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#8A8E3E] animate-pulse shrink-0"></span>
+              <span>EST. 2026 · A NON-PROFIT CULTURAL TRUST</span>
             </span>
             <span className="text-[#8A8E3E] hidden sm:inline font-bold">✦</span>
             <span className="hidden sm:inline text-[#8A8E3E] font-bold uppercase tracking-wider">THE SOUL HAS A TERRITORY</span>
           </div>
 
-          <div className="flex items-center gap-2 text-[#3A2B27]">
+          <div className="flex items-center gap-2 text-[#3A2B27] shrink-0">
             <span className="w-2 h-2 rounded-full bg-[#8A8E3E] animate-pulse"></span>
-            <span className="font-bold text-[11px] text-[#3A2B27]">ACTIVE SANCTUM IN KOLKATA</span>
+            <span className="font-bold text-[10px] sm:text-[11px] text-[#3A2B27]">ACTIVE SANCTUM IN KOLKATA</span>
           </div>
         </div>
 
@@ -76,7 +77,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <br className="hidden sm:block" />
                 <span className="inline-flex items-baseline flex-wrap gap-x-3 mt-1 sm:mt-2">
                   <span>We are</span>
-                  <span className="inline-block text-[#5C1D24]">
+                  <span className="inline-block text-[#471319]">
                     <AnimatePresence mode="wait">
                       <motion.span
                         key={heroScripts[activeScriptIdx]}
@@ -109,7 +110,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   onExploreGatherings();
                 }}
                 data-cursor="pointer"
-                className="group inline-flex items-center justify-center gap-3 px-8 py-4 text-xs font-bold uppercase tracking-[0.16em] rounded-xs bg-[#5C1D24] hover:bg-[#431319] text-[#FFF5E9] border border-[#3A2B27]/20 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+                className="group inline-flex items-center justify-center gap-3 px-8 py-4 text-xs font-bold uppercase tracking-[0.16em] rounded-xs bg-[#471319] hover:bg-[#350d12] text-[#FFF5E9] border border-[#3A2B27]/20 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
               >
                 <Ticket className="w-4 h-4 text-[#8A8E3E]" />
                 <span>Book Upcoming Gatherings</span>
@@ -201,7 +202,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
 
             <div className="p-3.5 bg-[#F6EADB] border border-[#3A2B27]/15 rounded-xs flex items-center justify-between text-xs font-mono text-[#725C54]">
-              <span className="text-[#5C1D24] font-bold uppercase text-[10px]">
+              <span className="text-[#471319] font-bold uppercase text-[10px]">
                 ZERO-COST ENTRY
               </span>
               <span className="text-[#3A2B27] font-semibold">Physical Studios & Open Labs</span>

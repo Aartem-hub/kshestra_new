@@ -190,7 +190,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#FFF5E9] text-[#3A2B27] selection:bg-[#5C1D24] selection:text-[#FFF5E9] relative font-sans overflow-x-hidden">
+    <div className="min-h-screen w-full bg-[#FFF5E9] text-[#3A2B27] selection:bg-[#471319] selection:text-[#FFF5E9] relative font-sans overflow-x-hidden">
       
       {/* Custom Art Cursor */}
       <CustomCursor />
@@ -208,7 +208,7 @@ export default function App() {
       />
 
       {/* MAIN VIEW SWITCHER - padded for fixed header */}
-      <main className="relative z-10 w-full pt-[74px] sm:pt-[78px]">
+      <main className="relative z-10 w-full pt-[90px] sm:pt-[82px]">
         
         {/* Return to Main Home Bar when in Member or Admin Views */}
         {currentView !== 'main' && (

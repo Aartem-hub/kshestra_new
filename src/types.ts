@@ -66,6 +66,14 @@ export interface Artwork {
   category: 'Performing Arts' | 'Cinema' | 'Visual Arts' | 'Literature & Theatre' | 'Linocut' | 'Terracotta' | 'Wash Painting' | 'Mixed Media' | 'Sculpture' | 'Textile' | string;
   patronageStatus?: 'Archived' | 'Seeking Patronage' | 'Permanent Collection';
   patronageAmount?: number;
+  eventGallery?: {
+    eventName: string;
+    date?: string;
+    venue?: string;
+    description?: string;
+    images: Array<{ url: string; caption: string; tag?: string }>;
+    videos: Array<{ url: string; poster?: string; title: string; duration?: string; description?: string }>;
+  };
 }
 
 export interface GazetteArticle {

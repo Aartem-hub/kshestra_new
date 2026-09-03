@@ -205,7 +205,44 @@ export const INITIAL_GALLERY_ITEMS: Artwork[] = [
     description: "Traditional folk instrumentalists in communion with modern ambient synthesizers at the Monsoon Confluence.",
     provenance: "Gathering #04 · Performing Arts · Kolkata Courtyard",
     category: "Performing Arts",
-    patronageStatus: "Permanent Collection"
+    patronageStatus: "Permanent Collection",
+    eventGallery: {
+      eventName: "Monsoon Confluence: Echoes of the Soil (Gathering #04)",
+      date: "August 2026",
+      venue: "Courtyard Amphitheatre, 91/11/1 Tollygunge, Kolkata",
+      description: "A documented live multi-instrumental session uniting folk Dotara, Khamak, Sarod, and ambient drone synthesizers before an intimate circle of 120 listeners.",
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80",
+          caption: "Live stage setup during twilight performance under open lanterns",
+          tag: "Performance"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80",
+          caption: "Sarod and acoustic flute tuning session in the green room courtyard",
+          tag: "Backstage"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1200&q=80",
+          caption: "Audience and resident artists in silent listening circle",
+          tag: "Gathering"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=80",
+          caption: "Ambient sound console and modular synthesizer patching session",
+          tag: "Sound Design"
+        }
+      ],
+      videos: [
+        {
+          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          poster: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80",
+          title: "Monsoon Confluence · Live Unplugged Improvisation",
+          duration: "3:42",
+          description: "Archive capture of the raga improvisations and acoustic transitions recorded direct from the sanctuary mixing desk."
+        }
+      ]
+    }
   },
   {
     id: "gal-02",
@@ -218,7 +255,44 @@ export const INITIAL_GALLERY_ITEMS: Artwork[] = [
     description: "Directors and camera operators refining scene blocking during the 48-Hour Indie Film Lab.",
     provenance: "Production Workshop #02 · Cinema · Tollygunge Studio Floor",
     category: "Cinema",
-    patronageStatus: "Archived"
+    patronageStatus: "Archived",
+    eventGallery: {
+      eventName: "48-Hour Indie Filmmaking & Matchmaking Lab #02",
+      date: "July 2026",
+      venue: "Floor 2 Soundstage, 91/11/1 Tollygunge, Kolkata",
+      description: "Documentary documentation from the zero-budget film lab where 6 short narratives were blocked, shot on cinema cameras, and color-graded in 48 hours.",
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1200&q=80",
+          caption: "Director of Photography checking aperture on vintage anamorphic glass",
+          tag: "Cinematography"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=1200&q=80",
+          caption: "Actors rehearsing emotional confrontation on the studio floor",
+          tag: "Rehearsal"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=1200&q=80",
+          caption: "Lighting grid setup using warm tungsten lanterns and flags",
+          tag: "Lighting"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80",
+          caption: "Color grading suite review and timeline editing session",
+          tag: "Post-Production"
+        }
+      ],
+      videos: [
+        {
+          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+          poster: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1200&q=80",
+          title: "Behind the Lens · 48-Hour Lab Documentary Reel",
+          duration: "2:55",
+          description: "Behind-the-scenes cinematography reel capturing the raw rush of shooting indie films without gatekeepers."
+        }
+      ]
+    }
   },
   {
     id: "gal-03",
@@ -232,7 +306,39 @@ export const INITIAL_GALLERY_ITEMS: Artwork[] = [
     provenance: "Residency Cycle Autumn · Visual Arts · Sanctum Gallery",
     category: "Visual Arts",
     patronageStatus: "Seeking Patronage",
-    patronageAmount: 25000
+    patronageAmount: 25000,
+    eventGallery: {
+      eventName: "Living Earth: Terracotta & Ceramic Residency Cycle",
+      date: "June 2026",
+      venue: "Main Vault Gallery, 91/11/1 Tollygunge, Kolkata",
+      description: "A showcase of traditional Bishnupur clay techniques merged with contemporary sculptural forms, fired in the sanctum kiln.",
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80",
+          caption: "Hand-turned terracotta sculptures cooling after first kiln firing",
+          tag: "Ceramics"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80",
+          caption: "Artisan engraving intricate geometric motifs on unfired clay pots",
+          tag: "Detail"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1578925518470-4def7a0f08bb?auto=format&fit=crop&w=1200&q=80",
+          caption: "Gallery installation view with spotlights and museum plinths",
+          tag: "Exhibition"
+        }
+      ],
+      videos: [
+        {
+          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+          poster: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80",
+          title: "Hands in the Clay · Artisans at Work",
+          duration: "2:18",
+          description: "Meditative visual footage documenting the spinning wheel and clay kneading process in the open workshop."
+        }
+      ]
+    }
   },
   {
     id: "gal-04",
@@ -245,7 +351,39 @@ export const INITIAL_GALLERY_ITEMS: Artwork[] = [
     description: "Poets and dramatists sharing original manuscripts under lantern light before open critique.",
     provenance: "Confluence #07 · Literature & Theatre · Open Amphitheatre",
     category: "Literature & Theatre",
-    patronageStatus: "Permanent Collection"
+    patronageStatus: "Permanent Collection",
+    eventGallery: {
+      eventName: "Confluence #07: Literature, Theatre & Spoken Word",
+      date: "May 2026",
+      venue: "Open Amphitheatre, 91/11/1 Tollygunge, Kolkata",
+      description: "An evocative evening of unreleased plays, dissident poetry in Bengali and English, and improvisational reading circles under the night sky.",
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=80",
+          caption: "Poet reciting verses from handwritten notebook in the illuminated pavilion",
+          tag: "Spoken Word"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80",
+          caption: "Manuscript exchange and critical editorial round-table",
+          tag: "Critique"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80",
+          caption: "Fellow artists gathered on earthen steps listening in twilight",
+          tag: "Community"
+        }
+      ],
+      videos: [
+        {
+          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+          poster: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=80",
+          title: "The Midnight Recitation · Confluence #07",
+          duration: "3:10",
+          description: "Live recording of the culminating theatrical dialogue recited without amplification."
+        }
+      ]
+    }
   }
 ];
 

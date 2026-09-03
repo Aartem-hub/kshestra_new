@@ -47,7 +47,7 @@ export const KshestraLogo: React.FC<KshestraLogoProps> = ({
         break;
       case 'terracotta':
       default:
-        fillColor = '#5C1D24';
+        fillColor = '#471319';
         break;
     }
   }

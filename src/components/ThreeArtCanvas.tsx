@@ -29,7 +29,7 @@ export const ThreeArtCanvas: React.FC = () => {
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
 
-    const colorTerracotta = new THREE.Color('#5C1D24');
+    const colorTerracotta = new THREE.Color('#471319');
     const colorMoss = new THREE.Color('#8A8E3E');
     const colorOchre = new THREE.Color('#8A8E3E');
     const colorCharcoal = new THREE.Color('#3A2B27');

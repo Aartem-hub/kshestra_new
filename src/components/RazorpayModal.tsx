@@ -67,7 +67,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
         particleCount: 90,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#5C1D24', '#8A8E3E', '#FFF5E9', '#8A8E3E']
+        colors: ['#471319', '#8A8E3E', '#FFF5E9', '#8A8E3E']
       });
     } catch {}
   };
@@ -168,7 +168,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
           <button
             onClick={onClose}
             data-cursor="pointer"
-            className="p-1.5 hover:bg-[#5C1D24]/10 rounded-sm text-[#3A2B27] transition-colors"
+            className="p-1.5 hover:bg-[#471319]/10 rounded-sm text-[#3A2B27] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -200,11 +200,11 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
                       <img src="/assets/Kshestra Logo PNG.png" alt="Kshestra Logo" className="w-full h-full object-contain" />
                     </div>
                     <div>
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-[#5C1D24]">Kshestra Sanctuary Entry</span>
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-[#471319]">Kshestra Sanctuary Entry</span>
                       <h5 className="font-serif font-bold text-sm text-[#3A2B27]">{completedPurchase.eventTitle}</h5>
                     </div>
                   </div>
-                  <div className="text-right font-mono text-xs font-bold text-[#5C1D24]">
+                  <div className="text-right font-mono text-xs font-bold text-[#471319]">
                     {completedPurchase.ticketCount} Pass(es)
                   </div>
                 </div>
@@ -230,7 +230,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
                 <button
                   onClick={onClose}
                   data-cursor="pointer"
-                  className="w-full py-3 text-xs font-bold uppercase rounded-sm bg-[#5C1D24] text-[#FFF5E9] hover:bg-[#431319]"
+                  className="w-full py-3 text-xs font-bold uppercase rounded-sm bg-[#471319] text-[#FFF5E9] hover:bg-[#471319]"
                 >
                   Done
                 </button>
@@ -240,8 +240,8 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
 
           {completedDonation && (
             <div className="space-y-6 text-center py-2">
-              <div className="w-12 h-12 bg-[#5C1D24]/10 text-[#5C1D24] rounded-full flex items-center justify-center mx-auto">
-                <Flame className="w-6 h-6 text-[#5C1D24]" />
+              <div className="w-12 h-12 bg-[#471319]/10 text-[#471319] rounded-full flex items-center justify-center mx-auto">
+                <Flame className="w-6 h-6 text-[#471319]" />
               </div>
               <div className="space-y-1">
                 <h4 className="font-serif-display text-2xl font-bold text-[#3A2B27]">
@@ -255,7 +255,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
               <div className="bg-[#FFFFFF] p-5 rounded-sm border border-[#3A2B27]/20 text-left space-y-2 text-xs">
                 <div className="flex justify-between font-bold text-[#3A2B27]">
                   <span>Contribution Amount</span>
-                  <span className="text-[#5C1D24]">₹{completedDonation.amount.toLocaleString('en-IN')}</span>
+                  <span className="text-[#471319]">₹{completedDonation.amount.toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex justify-between text-[#725C54]">
                   <span>Tier / Grant</span>
@@ -270,7 +270,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
               <button
                 onClick={onClose}
                 data-cursor="pointer"
-                className="w-full py-3 text-xs font-bold uppercase rounded-sm bg-[#5C1D24] text-[#FFF5E9] hover:bg-[#431319]"
+                className="w-full py-3 text-xs font-bold uppercase rounded-sm bg-[#471319] text-[#FFF5E9] hover:bg-[#471319]"
               >
                 Return to Sanctuary
               </button>
@@ -283,7 +283,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
               
               {mode === 'ticket' && event && (
                 <div className="bg-[#F6EADB] p-4 rounded-sm border border-[#3A2B27]/10 space-y-1">
-                  <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5C1D24]">
+                  <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#471319]">
                     {event.category}
                   </div>
                   <h4 className="font-serif-display text-base font-bold text-[#3A2B27]">
@@ -298,10 +298,10 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
               {mode === 'donation' && (
                 <div className="bg-[#F6EADB] p-4 rounded-sm border border-[#3A2B27]/10 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-mono uppercase text-[#5C1D24] font-bold block">Sanctuary Fellowship</span>
+                    <span className="text-[10px] font-mono uppercase text-[#471319] font-bold block">Sanctuary Fellowship</span>
                     <span className="font-serif font-bold text-base text-[#3A2B27]">{donationTierName || 'Cultural Grant'}</span>
                   </div>
-                  <div className="font-serif text-2xl font-bold text-[#5C1D24]">
+                  <div className="font-serif text-2xl font-bold text-[#471319]">
                     ₹{totalAmount.toLocaleString('en-IN')}
                   </div>
                 </div>
@@ -318,7 +318,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
                     value={mode === 'ticket' ? buyerName : donorName}
                     onChange={(e) => mode === 'ticket' ? setBuyerName(e.target.value) : setDonorName(e.target.value)}
                     placeholder="e.g. Suman Sengupta"
-                    className="w-full px-3.5 py-2.5 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#5C1D24] focus:outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#471319] focus:outline-none"
                   />
                 </div>
 
@@ -331,7 +331,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
                     value={mode === 'ticket' ? buyerEmail : donorEmail}
                     onChange={(e) => mode === 'ticket' ? setBuyerEmail(e.target.value) : setDonorEmail(e.target.value)}
                     placeholder="e.g. suman@domain.com"
-                    className="w-full px-3.5 py-2.5 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#5C1D24] focus:outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#471319] focus:outline-none"
                   />
                 </div>
 
@@ -344,7 +344,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
                       <select
                         value={ticketCount}
                         onChange={(e) => setTicketCount(parseInt(e.target.value, 10))}
-                        className="px-3.5 py-2.5 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#5C1D24] focus:outline-none"
+                        className="px-3.5 py-2.5 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#471319] focus:outline-none"
                       >
                         <option value={1}>1 Seat {event.price > 0 ? `(₹${event.price * 1})` : '(Free Pass)'}</option>
                         <option value={2}>2 Seats {event.price > 0 ? `(₹${event.price * 2})` : '(Free Pass)'}</option>
@@ -352,7 +352,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
                         <option value={4}>4 Seats {event.price > 0 ? `(₹${event.price * 4})` : '(Free Pass)'}</option>
                       </select>
                       <span className="text-xs text-[#725C54] font-mono">
-                        Total: <strong className="text-[#5C1D24]">{totalAmount === 0 ? 'Free (Trust Sponsored)' : `₹${totalAmount}`}</strong>
+                        Total: <strong className="text-[#471319]">{totalAmount === 0 ? 'Free (Trust Sponsored)' : `₹${totalAmount}`}</strong>
                       </span>
                     </div>
                   </div>
@@ -373,7 +373,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
                 onClick={handleProcessPayment}
                 disabled={isProcessing}
                 data-cursor="pointer"
-                className="w-full py-3.5 text-xs font-bold uppercase tracking-wider rounded-sm bg-[#5C1D24] hover:bg-[#431319] text-[#FFF5E9] border border-[#3A2B27]/20 transition-all shadow-md flex items-center justify-center gap-2"
+                className="w-full py-3.5 text-xs font-bold uppercase tracking-wider rounded-sm bg-[#471319] hover:bg-[#471319] text-[#FFF5E9] border border-[#3A2B27]/20 transition-all shadow-md flex items-center justify-center gap-2"
               >
                 {isProcessing ? (
                   <span>Securing Reservation...</span>

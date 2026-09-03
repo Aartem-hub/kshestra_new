@@ -15,14 +15,14 @@ export const UnivertePipelineSection: React.FC = () => {
           
           {/* Left / Content */}
           <div className="space-y-6 max-w-3xl">
-            <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-[#5C1D24]">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-[#471319]">
               <Compass className="w-3.5 h-3.5 text-[#8A8E3E]" />
               <span>THE CAREER BRIDGE</span>
             </div>
 
             <h2 className="font-gambetta text-3xl sm:text-5xl font-bold tracking-tight text-[#3A2B27] leading-[1.05]">
               Sustaining the Artist: <br className="hidden sm:inline" />
-              <span className="text-[#5C1D24] italic">The Univerte Pipeline</span>
+              <span className="text-[#471319] italic">The Univerte Pipeline</span>
             </h2>
 
             <p className="text-sm sm:text-base text-[#725C54] leading-relaxed font-sans">
@@ -30,7 +30,7 @@ export const UnivertePipelineSection: React.FC = () => {
             </p>
 
             {/* Callout quote plate */}
-            <div className="border-l-3 border-[#5C1D24] pl-4 py-1 text-base sm:text-lg font-gambetta font-bold italic text-[#3A2B27]">
+            <div className="border-l-3 border-[#471319] pl-4 py-1 text-base sm:text-lg font-gambetta font-bold italic text-[#3A2B27]">
               "We protect and train you here. Univerte gets you hired there."
             </div>
           </div>
@@ -43,7 +43,7 @@ export const UnivertePipelineSection: React.FC = () => {
                 setShowUniverteModal(true);
               }}
               data-cursor="pointer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 text-xs font-bold uppercase tracking-[0.16em] rounded-xs bg-[#3A2B27] hover:bg-[#5C1D24] text-[#FFF5E9] border border-[#3A2B27] shadow-md transition-all whitespace-nowrap"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 text-xs font-bold uppercase tracking-[0.16em] rounded-xs bg-[#3A2B27] hover:bg-[#471319] text-[#FFF5E9] border border-[#3A2B27] shadow-md transition-all whitespace-nowrap"
             >
               <span>Discover the Univerte Network</span>
               <ArrowUpRight className="w-4 h-4 text-[#8A8E3E]" />
@@ -67,13 +67,13 @@ export const UnivertePipelineSection: React.FC = () => {
               <button
                 onClick={() => setShowUniverteModal(false)}
                 data-cursor="pointer"
-                className="absolute top-4 right-4 p-2 text-[#3A2B27] hover:bg-[#5C1D24] hover:text-[#FFF5E9] rounded-xs transition-colors border border-[#3A2B27]/20"
+                className="absolute top-4 right-4 p-2 text-[#3A2B27] hover:bg-[#471319] hover:text-[#FFF5E9] rounded-xs transition-colors border border-[#3A2B27]/20"
               >
                 <X className="w-5 h-5" />
               </button>
 
               <div className="space-y-2 border-b border-[#3A2B27]/15 pb-4">
-                <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#5C1D24]">
+                <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#471319]">
                   Commercial Bridge & Industry Alliance
                 </div>
                 <h3 className="font-gambetta text-2xl sm:text-3xl font-bold text-[#3A2B27]">
@@ -103,7 +103,7 @@ export const UnivertePipelineSection: React.FC = () => {
                 <button
                   onClick={() => setShowUniverteModal(false)}
                   data-cursor="pointer"
-                  className="px-5 py-2.5 text-xs font-bold uppercase rounded-xs bg-[#5C1D24] text-[#FFF5E9]"
+                  className="px-5 py-2.5 text-xs font-bold uppercase rounded-xs bg-[#471319] text-[#FFF5E9]"
                 >
                   Understood & Return to Sanctuary
                 </button>

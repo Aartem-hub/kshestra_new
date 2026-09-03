@@ -39,7 +39,7 @@ export const AudioDock: React.FC = () => {
       if (!isPlaying) {
         // Resting line
         ctx.beginPath();
-        ctx.strokeStyle = '#5C1D24';
+        ctx.strokeStyle = '#471319';
         ctx.lineWidth = 1;
         ctx.globalAlpha = 0.3;
         ctx.moveTo(0, canvas.height / 2);
@@ -58,7 +58,7 @@ export const AudioDock: React.FC = () => {
         const x = i * barWidth;
         const y = (canvas.height - normalized) / 2;
 
-        ctx.fillStyle = i % 2 === 0 ? '#5C1D24' : '#8A8E3E';
+        ctx.fillStyle = i % 2 === 0 ? '#471319' : '#8A8E3E';
         ctx.globalAlpha = 0.9;
         ctx.fillRect(x + 1, y, barWidth - 2, normalized);
       }
@@ -90,14 +90,14 @@ export const AudioDock: React.FC = () => {
               onClick={togglePlayback}
               data-cursor="pointer"
               title={isPlaying ? "Pause Background Music" : "Play Background Music: Main Baaki Hoon"}
-              className="w-8 h-8 rounded-xs shrink-0 flex items-center justify-center bg-[#5C1D24] text-[#FFF5E9] hover:bg-[#431319] transition-colors shadow-xs"
+              className="w-8 h-8 rounded-xs shrink-0 flex items-center justify-center bg-[#471319] text-[#FFF5E9] hover:bg-[#471319] transition-colors shadow-xs"
             >
               {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 translate-x-0.5" />}
             </button>
 
             <div className="overflow-hidden">
               <div className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-[#3A2B27] truncate">
-                <Disc3 className={`w-3.5 h-3.5 text-[#5C1D24] shrink-0 ${isPlaying ? 'animate-spin' : ''}`} />
+                <Disc3 className={`w-3.5 h-3.5 text-[#471319] shrink-0 ${isPlaying ? 'animate-spin' : ''}`} />
                 <span className="truncate">{OFFICIAL_TRACK.title}</span>
               </div>
               <p className="text-[10px] text-[#725C54] truncate font-mono">
@@ -135,9 +135,9 @@ export const AudioDock: React.FC = () => {
             <div className="text-[10px] font-mono text-[#725C54] bg-[#F6EADB] p-2 rounded-xs border border-[#3A2B27]/10 flex items-center justify-between">
               <div>
                 <div className="font-bold text-[#3A2B27]">{OFFICIAL_TRACK.title}</div>
-                <div className="text-[#5C1D24]">{OFFICIAL_TRACK.artist}</div>
+                <div className="text-[#471319]">{OFFICIAL_TRACK.artist}</div>
               </div>
-              <span className="px-1.5 py-0.5 bg-[#5C1D24]/10 text-[#5C1D24] text-[9px] font-bold rounded-xs">
+              <span className="px-1.5 py-0.5 bg-[#471319]/10 text-[#471319] text-[9px] font-bold rounded-xs">
                 MP3 STEREO
               </span>
             </div>
@@ -146,7 +146,7 @@ export const AudioDock: React.FC = () => {
             <div className="space-y-1">
               <div className="flex items-center justify-between text-[10px] font-mono text-[#725C54]">
                 <span className="flex items-center gap-1">
-                  {volume === 0 ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3 text-[#5C1D24]" />}
+                  {volume === 0 ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3 text-[#471319]" />}
                   Master Music Volume
                 </span>
                 <span>{Math.round(volume * 100)}%</span>
@@ -158,7 +158,7 @@ export const AudioDock: React.FC = () => {
                 step="0.05"
                 value={volume}
                 onChange={handleVolumeChange}
-                className="w-full h-1 bg-[#3A2B27]/20 rounded-lg appearance-none cursor-pointer accent-[#5C1D24]"
+                className="w-full h-1 bg-[#3A2B27]/20 rounded-lg appearance-none cursor-pointer accent-[#471319]"
               />
             </div>
 

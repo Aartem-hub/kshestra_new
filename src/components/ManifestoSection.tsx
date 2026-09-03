@@ -44,8 +44,8 @@ export const ManifestoSection: React.FC = () => {
         {/* Editorial Section Masthead */}
         <div className="border-b-2 border-[#3A2B27] pb-8 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
-            <div className="flex items-center gap-2 text-[#5C1D24] font-bold tracking-widest uppercase">
-              <Feather className="w-4 h-4 text-[#5C1D24]" />
+            <div className="flex items-center gap-2 text-[#471319] font-bold tracking-widest uppercase">
+              <Feather className="w-4 h-4 text-[#471319]" />
               <span>THE SACRED CHARTER · RATIFIED 2026</span>
             </div>
             <div className="text-[#725C54] uppercase tracking-wider">
@@ -58,12 +58,12 @@ export const ManifestoSection: React.FC = () => {
               <h2 className="font-gambetta text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#3A2B27] leading-[1.08]">
                 The 10 Commandments
               </h2>
-              <p className="font-serif italic text-lg sm:text-2xl text-[#5C1D24] leading-snug max-w-3xl">
+              <p className="font-serif italic text-lg sm:text-2xl text-[#471319] leading-snug max-w-3xl">
                 "{KSHESTRA_MANIFESTO.ourBelief}"
               </p>
             </div>
 
-            <div className="lg:col-span-4 lg:text-right font-mono text-xs text-[#725C54] space-y-2 border-l-2 lg:border-l-0 lg:border-r-2 border-[#5C1D24] pl-4 lg:pl-0 lg:pr-4 py-1">
+            <div className="lg:col-span-4 lg:text-right font-mono text-xs text-[#725C54] space-y-2 border-l-2 lg:border-l-0 lg:border-r-2 border-[#471319] pl-4 lg:pl-0 lg:pr-4 py-1">
               <p className="font-bold text-[#3A2B27] uppercase tracking-wider">
                 A Binding Covenant For Free Art
               </p>
@@ -103,11 +103,11 @@ export const ManifestoSection: React.FC = () => {
                   <div className="md:col-span-3 lg:col-span-3 flex md:flex-col items-baseline md:items-start justify-between md:justify-start gap-2">
                     <div className="flex items-center gap-3">
                       <div className={`w-9 h-9 rounded-xs flex items-center justify-center transition-colors ${
-                        isActive ? 'bg-[#8A8E3E] text-[#FFF5E9]' : 'bg-[#3A2B27]/10 text-[#5C1D24] group-hover:bg-[#8A8E3E] group-hover:text-[#FFF5E9]'
+                        isActive ? 'bg-[#8A8E3E] text-[#FFF5E9]' : 'bg-[#3A2B27]/10 text-[#471319] group-hover:bg-[#8A8E3E] group-hover:text-[#FFF5E9]'
                       }`}>
                         <IconComponent className="w-4 h-4" />
                       </div>
-                      <span className="font-gambetta text-3xl sm:text-4xl font-bold text-[#5C1D24] tracking-tight leading-none">
+                      <span className="font-gambetta text-3xl sm:text-4xl font-bold text-[#471319] tracking-tight leading-none">
                         {roman}
                       </span>
                     </div>
@@ -125,7 +125,7 @@ export const ManifestoSection: React.FC = () => {
                   {/* Right Main Column: Title, Quote & Tangible Mechanism */}
                   <div className="md:col-span-9 lg:col-span-9 space-y-3">
                     <div className="flex items-center justify-between gap-4">
-                      <h3 className="font-gambetta text-xl sm:text-2xl lg:text-3xl font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors">
+                      <h3 className="font-gambetta text-xl sm:text-2xl lg:text-3xl font-bold text-[#3A2B27] group-hover:text-[#471319] transition-colors">
                         {p.title}
                       </h3>
                       <span className="text-xs font-mono text-[#725C54] flex items-center gap-1 shrink-0">
@@ -178,11 +178,11 @@ export const ManifestoSection: React.FC = () => {
         <div className="border-2 border-[#3A2B27] bg-[#F6EADB] p-8 sm:p-10 rounded-xs shadow-sm space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#3A2B27]/15 pb-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xs bg-[#5C1D24] flex items-center justify-center text-[#FFF5E9] p-2">
+              <div className="w-10 h-10 rounded-xs bg-[#471319] flex items-center justify-center text-[#FFF5E9] p-2">
                 <KshestraLogo preferAssetImage className="w-full h-full object-contain filter invert" />
               </div>
               <div>
-                <span className="text-xs font-mono font-bold tracking-widest uppercase text-[#5C1D24]">
+                <span className="text-xs font-mono font-bold tracking-widest uppercase text-[#471319]">
                   THE SOVEREIGN PLEDGE
                 </span>
                 <h4 className="font-gambetta text-xl sm:text-2xl font-bold text-[#3A2B27]">
@@ -191,15 +191,15 @@ export const ManifestoSection: React.FC = () => {
               </div>
             </div>
 
-            <div className="px-4 py-1.5 bg-[#5C1D24] text-[#FFF5E9] font-mono text-xs font-bold uppercase tracking-widest rounded-xs self-start md:self-auto">
+            <div className="px-4 py-1.5 bg-[#471319] text-[#FFF5E9] font-mono text-xs font-bold uppercase tracking-widest rounded-xs self-start md:self-auto">
               MANTRA: CREATE · SHARE · REBEL · UPLIFT · REPEAT
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
             {KSHESTRA_MANIFESTO.ourPromise.map((promise, pIdx) => (
-              <div key={pIdx} className="flex items-start gap-3 bg-[#FFFFFF] p-4 rounded-xs border border-[#3A2B27]/15 hover:border-[#5C1D24]/40 transition-colors">
-                <CheckCircle2 className="w-4 h-4 text-[#5C1D24] shrink-0 mt-0.5" />
+              <div key={pIdx} className="flex items-start gap-3 bg-[#FFFFFF] p-4 rounded-xs border border-[#3A2B27]/15 hover:border-[#471319]/40 transition-colors">
+                <CheckCircle2 className="w-4 h-4 text-[#471319] shrink-0 mt-0.5" />
                 <span className="font-sans text-xs sm:text-sm text-[#3A2B27] font-medium leading-snug">
                   {promise}
                 </span>

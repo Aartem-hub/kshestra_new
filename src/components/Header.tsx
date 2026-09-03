@@ -143,7 +143,7 @@ export const Header: React.FC<HeaderProps> = ({
       {/* 1. Cultural Trust Announcement Strip */}
       <div className="border-b border-[#3A2B27]/10 py-1.5 px-4 sm:px-8 text-[11px] font-sans flex flex-wrap items-center justify-between gap-2 text-[#725C54] bg-[#F6EADB]/70">
         <div className="flex items-center gap-3">
-          <span className="font-semibold tracking-wider text-[#5C1D24] uppercase text-[10px] flex items-center gap-1.5">
+          <span className="font-semibold tracking-wider text-[#471319] uppercase text-[10px] flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#8A8E3E] animate-pulse"></span>
             <span>EST. 2026 · A NON-PROFIT CULTURAL TRUST</span>
           </span>
@@ -158,12 +158,12 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={toggleSound}
             data-cursor="pointer"
-            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] uppercase tracking-wider rounded-xs bg-[#FFF5E9] hover:bg-[#5C1D24]/10 text-[#3A2B27] border border-[#3A2B27]/20 transition-colors"
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] uppercase tracking-wider rounded-xs bg-[#FFF5E9] hover:bg-[#471319]/10 text-[#3A2B27] border border-[#3A2B27]/20 transition-colors"
             title="Toggle background music: Main Baaki Hoon"
           >
             {isPlayingAudio ? (
               <>
-                <Volume2 className="w-3 h-3 text-[#5C1D24] animate-pulse" />
+                <Volume2 className="w-3 h-3 text-[#471319] animate-pulse" />
                 <span className="font-mono">Music: Playing</span>
               </>
             ) : (
@@ -178,7 +178,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={onOpenAdmin}
             data-cursor="pointer"
-            className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-xs text-[#725C54] hover:text-[#5C1D24] transition-colors"
+            className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-xs text-[#725C54] hover:text-[#471319] transition-colors"
           >
             <ShieldCheck className="w-3 h-3 text-[#8A8E3E]" />
             <span className="font-mono">Trustee Desk</span>
@@ -198,12 +198,12 @@ export const Header: React.FC<HeaderProps> = ({
           className="text-left group flex items-center gap-3.5"
           data-cursor="pointer"
         >
-          <div className="w-10 h-10 rounded-xs bg-[#FFF5E9] border border-[#3A2B27]/20 flex items-center justify-center p-1 shadow-xs group-hover:border-[#5C1D24] transition-all">
+          <div className="w-10 h-10 rounded-xs bg-[#FFF5E9] border border-[#3A2B27]/20 flex items-center justify-center p-1 shadow-xs group-hover:border-[#471319] transition-all">
             <KshestraLogo preferAssetImage className="w-full h-full object-contain" />
           </div>
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="font-gambetta text-xl sm:text-2xl font-bold tracking-tight text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors">
+              <span className="font-gambetta text-xl sm:text-2xl font-bold tracking-tight text-[#3A2B27] group-hover:text-[#471319] transition-colors">
                 Kshestra
               </span>
             </div>
@@ -225,11 +225,11 @@ export const Header: React.FC<HeaderProps> = ({
               }}
               data-cursor="pointer"
               className={`flex items-center gap-1.5 py-1 transition-colors tracking-wide font-sans text-sm font-medium ${
-                discoverOpen ? 'text-[#5C1D24]' : 'text-[#3A2B27] hover:text-[#5C1D24]'
+                discoverOpen ? 'text-[#471319]' : 'text-[#3A2B27] hover:text-[#471319]'
               }`}
             >
               <span>Discover Kshestra</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${discoverOpen ? 'rotate-180 text-[#5C1D24]' : 'text-[#725C54]'}`} />
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${discoverOpen ? 'rotate-180 text-[#471319]' : 'text-[#725C54]'}`} />
             </button>
 
             <AnimatePresence>
@@ -243,8 +243,8 @@ export const Header: React.FC<HeaderProps> = ({
                 >
                   {/* Subtle architectural header */}
                   <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-[#3A2B27]/15 font-mono text-[10px] uppercase tracking-widest text-[#725C54]">
-                    <span className="flex items-center gap-1.5 text-[#5C1D24] font-bold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#5C1D24]" />
+                    <span className="flex items-center gap-1.5 text-[#471319] font-bold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#471319]" />
                       <span>সন্ধান · The Sanctuary</span>
                     </span>
                     <span className="text-[#8A8E3E] font-medium">91/11/1 Tollygunge</span>
@@ -256,15 +256,15 @@ export const Header: React.FC<HeaderProps> = ({
                       data-cursor="pointer"
                       className="w-full text-left p-2.5 rounded-xs hover:bg-[#F6EADB] transition-all group flex items-start gap-3 border border-transparent hover:border-[#3A2B27]/10"
                     >
-                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#5C1D24] border border-[#3A2B27]/15 group-hover:border-[#5C1D24] flex items-center justify-center shrink-0 transition-colors">
-                        <BookOpen className="w-4 h-4 text-[#5C1D24] group-hover:text-[#FFF5E9] transition-colors" />
+                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#471319] border border-[#3A2B27]/15 group-hover:border-[#471319] flex items-center justify-center shrink-0 transition-colors">
+                        <BookOpen className="w-4 h-4 text-[#471319] group-hover:text-[#FFF5E9] transition-colors" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-1">
-                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors">
+                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#471319] transition-colors">
                             The Manifesto & 10 Commandments
                           </span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#5C1D24] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#471319] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
                         </div>
                         <p className="text-[11px] font-sans text-[#725C54] leading-relaxed mt-0.5">
                           Uncompromising ethical covenants & 100% artist ownership.
@@ -277,15 +277,15 @@ export const Header: React.FC<HeaderProps> = ({
                       data-cursor="pointer"
                       className="w-full text-left p-2.5 rounded-xs hover:bg-[#F6EADB] transition-all group flex items-start gap-3 border border-transparent hover:border-[#3A2B27]/10"
                     >
-                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#5C1D24] border border-[#3A2B27]/15 group-hover:border-[#5C1D24] flex items-center justify-center shrink-0 transition-colors">
+                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#471319] border border-[#3A2B27]/15 group-hover:border-[#471319] flex items-center justify-center shrink-0 transition-colors">
                         <Users className="w-4 h-4 text-[#8A8E3E] group-hover:text-[#FFF5E9] transition-colors" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-1">
-                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors">
+                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#471319] transition-colors">
                             Guardians & Trustees
                           </span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#5C1D24] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#471319] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
                         </div>
                         <p className="text-[11px] font-sans text-[#725C54] leading-relaxed mt-0.5">
                           Meet the cultural stewards and trustees safeguarding the spaces.
@@ -298,15 +298,15 @@ export const Header: React.FC<HeaderProps> = ({
                       data-cursor="pointer"
                       className="w-full text-left p-2.5 rounded-xs hover:bg-[#F6EADB] transition-all group flex items-start gap-3 border border-transparent hover:border-[#3A2B27]/10"
                     >
-                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#5C1D24] border border-[#3A2B27]/15 group-hover:border-[#5C1D24] flex items-center justify-center shrink-0 transition-colors">
+                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#471319] border border-[#3A2B27]/15 group-hover:border-[#471319] flex items-center justify-center shrink-0 transition-colors">
                         <ImageIcon className="w-4 h-4 text-[#8A8E3E] group-hover:text-[#FFF5E9] transition-colors" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-1">
-                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors">
+                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#471319] transition-colors">
                             The Living Archive
                           </span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#5C1D24] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#471319] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
                         </div>
                         <p className="text-[11px] font-sans text-[#725C54] leading-relaxed mt-0.5">
                           Permanent gallery vault of cinema, sound works, and visual arts.
@@ -318,7 +318,7 @@ export const Header: React.FC<HeaderProps> = ({
                   {/* Bottom context strip */}
                   <div className="mt-2.5 pt-2 border-t border-[#3A2B27]/10 flex items-center justify-between text-[10px] font-mono text-[#725C54]">
                     <span>Non-Profit Cultural Trust</span>
-                    <span className="text-[#5C1D24] font-semibold">Kolkata Living Arts</span>
+                    <span className="text-[#471319] font-semibold">Kolkata Living Arts</span>
                   </div>
                 </motion.div>
               )}
@@ -334,11 +334,11 @@ export const Header: React.FC<HeaderProps> = ({
               }}
               data-cursor="pointer"
               className={`flex items-center gap-1.5 py-1 transition-colors tracking-wide font-sans text-sm font-medium ${
-                communityOpen ? 'text-[#5C1D24]' : 'text-[#3A2B27] hover:text-[#5C1D24]'
+                communityOpen ? 'text-[#471319]' : 'text-[#3A2B27] hover:text-[#471319]'
               }`}
             >
               <span>The Community</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${communityOpen ? 'rotate-180 text-[#5C1D24]' : 'text-[#725C54]'}`} />
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${communityOpen ? 'rotate-180 text-[#471319]' : 'text-[#725C54]'}`} />
             </button>
 
             <AnimatePresence>
@@ -356,7 +356,7 @@ export const Header: React.FC<HeaderProps> = ({
                       <span className="w-1.5 h-1.5 rounded-full bg-[#8A8E3E]" />
                       <span>সমাজ · Living Collective</span>
                     </span>
-                    <span className="px-1.5 py-0.5 rounded-xs bg-[#5C1D24] text-[#FFF5E9] font-bold text-[9px] uppercase tracking-wider">
+                    <span className="px-1.5 py-0.5 rounded-xs bg-[#471319] text-[#FFF5E9] font-bold text-[9px] uppercase tracking-wider">
                       Free Passes Active
                     </span>
                   </div>
@@ -367,16 +367,16 @@ export const Header: React.FC<HeaderProps> = ({
                       data-cursor="pointer"
                       className="w-full text-left p-2.5 rounded-xs hover:bg-[#F6EADB] transition-all group flex items-start gap-3 border border-transparent hover:border-[#3A2B27]/10"
                     >
-                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#5C1D24] border border-[#3A2B27]/15 group-hover:border-[#5C1D24] flex items-center justify-center shrink-0 transition-colors">
-                        <Calendar className="w-4 h-4 text-[#5C1D24] group-hover:text-[#FFF5E9] transition-colors" />
+                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#471319] border border-[#3A2B27]/15 group-hover:border-[#471319] flex items-center justify-center shrink-0 transition-colors">
+                        <Calendar className="w-4 h-4 text-[#471319] group-hover:text-[#FFF5E9] transition-colors" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-1">
-                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors flex items-center gap-1.5">
+                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#471319] transition-colors flex items-center gap-1.5">
                             <span>Confluences & Masterclasses</span>
                             <span className="text-[9px] px-1.5 py-0.2 rounded-xs bg-[#8A8E3E]/20 text-[#3A2B27] font-mono font-bold">FREE</span>
                           </span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#5C1D24] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#471319] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
                         </div>
                         <p className="text-[11px] font-sans text-[#725C54] leading-relaxed mt-0.5">
                           Unplugged gatherings, improv labs, and acoustic circles in Tollygunge.
@@ -389,15 +389,15 @@ export const Header: React.FC<HeaderProps> = ({
                       data-cursor="pointer"
                       className="w-full text-left p-2.5 rounded-xs hover:bg-[#F6EADB] transition-all group flex items-start gap-3 border border-transparent hover:border-[#3A2B27]/10"
                     >
-                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#5C1D24] border border-[#3A2B27]/15 group-hover:border-[#5C1D24] flex items-center justify-center shrink-0 transition-colors">
+                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#471319] border border-[#3A2B27]/15 group-hover:border-[#471319] flex items-center justify-center shrink-0 transition-colors">
                         <Feather className="w-4 h-4 text-[#8A8E3E] group-hover:text-[#FFF5E9] transition-colors" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-1">
-                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors">
+                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#471319] transition-colors">
                             Dispatches & Gazette
                           </span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#5C1D24] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#471319] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
                         </div>
                         <p className="text-[11px] font-sans text-[#725C54] leading-relaxed mt-0.5">
                           Essays on indigenous memory, underground cinema, and folk poetics.
@@ -410,15 +410,15 @@ export const Header: React.FC<HeaderProps> = ({
                       data-cursor="pointer"
                       className="w-full text-left p-2.5 rounded-xs hover:bg-[#F6EADB] transition-all group flex items-start gap-3 border border-transparent hover:border-[#3A2B27]/10"
                     >
-                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#5C1D24] border border-[#3A2B27]/15 group-hover:border-[#5C1D24] flex items-center justify-center shrink-0 transition-colors">
+                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#471319] border border-[#3A2B27]/15 group-hover:border-[#471319] flex items-center justify-center shrink-0 transition-colors">
                         <Sparkles className="w-4 h-4 text-[#8A8E3E] group-hover:text-[#FFF5E9] transition-colors" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-1">
-                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors">
+                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#471319] transition-colors">
                             Open Calls & Residencies
                           </span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#5C1D24] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#471319] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
                         </div>
                         <p className="text-[11px] font-sans text-[#725C54] leading-relaxed mt-0.5">
                           Apply for physical studio space, equipment gear, and production grants.
@@ -449,7 +449,7 @@ export const Header: React.FC<HeaderProps> = ({
               onOpenDonate();
             }}
             data-cursor="pointer"
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xs bg-[#5C1D24] hover:bg-[#431319] text-[#FFF5E9] border border-[#3A2B27]/30 shadow-xs transition-all duration-200 hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xs bg-[#471319] hover:bg-[#471319] text-[#FFF5E9] border border-[#3A2B27]/30 shadow-xs transition-all duration-200 hover:-translate-y-0.5"
           >
             <Flame className="w-3.5 h-3.5 text-[#8A8E3E]" />
             <span>Support the Flame (Donate)</span>
@@ -481,7 +481,7 @@ export const Header: React.FC<HeaderProps> = ({
               audioSynth.playChime();
               onOpenDonate();
             }}
-            className="px-3 py-1.5 text-[11px] font-bold uppercase rounded-xs bg-[#5C1D24] text-[#FFF5E9] sm:hidden"
+            className="px-3 py-1.5 text-[11px] font-bold uppercase rounded-xs bg-[#471319] text-[#FFF5E9] sm:hidden"
           >
             Donate
           </button>
@@ -502,7 +502,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="lg:hidden bg-[#FFF5E9] border-b border-[#3A2B27]/20 px-6 py-5 space-y-4 shadow-lg animate-in slide-in-from-top duration-200">
           <div className="space-y-4">
             <div className="border-b border-[#3A2B27]/10 pb-2 flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase text-[#5C1D24] font-bold tracking-wider">
+              <span className="text-[10px] font-mono uppercase text-[#471319] font-bold tracking-wider">
                 সন্ধান · Discover Kshestra
               </span>
               <span className="text-[10px] font-mono text-[#725C54]">91/11/1 Tollygunge</span>
@@ -512,7 +512,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => handleNavTo('manifesto-section')}
                 className="text-left p-2 rounded-xs bg-[#F6EADB]/50 hover:bg-[#F6EADB] flex items-center gap-2.5 text-xs text-[#3A2B27]"
               >
-                <BookOpen className="w-3.5 h-3.5 text-[#5C1D24] shrink-0" />
+                <BookOpen className="w-3.5 h-3.5 text-[#471319] shrink-0" />
                 <div>
                   <div className="font-gambetta font-bold text-sm">The Manifesto & 10 Commandments</div>
                   <div className="text-[10px] text-[#725C54]">Ethical covenants & 100% artist rights</div>
@@ -544,14 +544,14 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-[10px] font-mono uppercase text-[#8A8E3E] font-bold tracking-wider">
                 সমাজ · The Community
               </span>
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-xs bg-[#5C1D24] text-[#FFF5E9] font-bold">FREE PASSES</span>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-xs bg-[#471319] text-[#FFF5E9] font-bold">FREE PASSES</span>
             </div>
             <div className="grid grid-cols-1 gap-2">
               <button
                 onClick={() => handleNavTo('events-section')}
                 className="text-left p-2 rounded-xs bg-[#F6EADB]/50 hover:bg-[#F6EADB] flex items-center gap-2.5 text-xs text-[#3A2B27]"
               >
-                <Calendar className="w-3.5 h-3.5 text-[#5C1D24] shrink-0" />
+                <Calendar className="w-3.5 h-3.5 text-[#471319] shrink-0" />
                 <div>
                   <div className="font-gambetta font-bold text-sm flex items-center gap-2">
                     <span>Confluences & Masterclasses</span>
@@ -589,7 +589,7 @@ export const Header: React.FC<HeaderProps> = ({
                 setMobileMenuOpen(false);
                 onOpenDonate();
               }}
-              className="w-full py-2.5 text-center text-xs font-bold uppercase rounded-xs bg-[#5C1D24] text-[#FFF5E9] flex items-center justify-center gap-2"
+              className="w-full py-2.5 text-center text-xs font-bold uppercase rounded-xs bg-[#471319] text-[#FFF5E9] flex items-center justify-center gap-2"
             >
               <Flame className="w-4 h-4 text-[#8A8E3E]" />
               <span>Support the Flame (Donate)</span>

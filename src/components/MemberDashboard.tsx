@@ -46,7 +46,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
   if (!currentUser) {
     return (
       <div className="py-24 text-center max-w-xl mx-auto px-4">
-        <h3 className="font-gambetta text-3xl font-bold text-[#5C1D24] mb-3">
+        <h3 className="font-gambetta text-3xl font-bold text-[#471319] mb-3">
           Sanctum Portal Restricted
         </h3>
         <p className="font-sans text-sm text-[#725C54] mb-6">
@@ -121,7 +121,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
       {/* 1. Header Profile Banner */}
       <div className="rounded-xs p-6 sm:p-8 bg-[#FFFFFF] border border-[#3A2B27]/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-xs bg-[#5C1D24] text-[#FFF5E9] flex items-center justify-center font-serif text-2xl font-bold shadow-xs">
+          <div className="w-14 h-14 rounded-xs bg-[#471319] text-[#FFF5E9] flex items-center justify-center font-serif text-2xl font-bold shadow-xs">
             {currentUser.name.charAt(0)}
           </div>
           <div className="space-y-1">
@@ -143,7 +143,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
           <button
             onClick={onMakeDonation}
             data-cursor="pointer"
-            className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold uppercase rounded-xs bg-[#5C1D24] hover:bg-[#431319] text-[#FFF5E9] border border-[#3A2B27]/20 transition-all shadow-xs"
+            className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold uppercase rounded-xs bg-[#471319] hover:bg-[#471319] text-[#FFF5E9] border border-[#3A2B27]/20 transition-all shadow-xs"
           >
             <Flame className="w-3.5 h-3.5 text-[#8A8E3E]" />
             <span>Support the Flame (Donate)</span>
@@ -151,7 +151,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
           <button
             onClick={handleLogout}
             data-cursor="pointer"
-            className="p-2.5 text-[#725C54] hover:text-[#5C1D24] hover:bg-[#FFF5E9] rounded-xs border border-[#3A2B27]/15 transition-colors"
+            className="p-2.5 text-[#725C54] hover:text-[#471319] hover:bg-[#FFF5E9] rounded-xs border border-[#3A2B27]/15 transition-colors"
             title="Log Out"
           >
             <LogOut className="w-4 h-4" />
@@ -166,7 +166,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
           data-cursor="pointer"
           className={`py-3 px-5 border-b-2 flex items-center gap-2 transition-all whitespace-nowrap ${
             activeSubTab === 'passes'
-              ? 'border-[#5C1D24] text-[#5C1D24]'
+              ? 'border-[#471319] text-[#471319]'
               : 'border-transparent text-[#725C54] hover:text-[#3A2B27]'
           }`}
         >
@@ -179,7 +179,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
           data-cursor="pointer"
           className={`py-3 px-5 border-b-2 flex items-center gap-2 transition-all whitespace-nowrap ${
             activeSubTab === 'donations'
-              ? 'border-[#5C1D24] text-[#5C1D24]'
+              ? 'border-[#471319] text-[#471319]'
               : 'border-transparent text-[#725C54] hover:text-[#3A2B27]'
           }`}
         >
@@ -203,7 +203,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
               <button
                 onClick={onExploreEvents}
                 data-cursor="pointer"
-                className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold uppercase rounded-xs bg-[#5C1D24] text-[#FFF5E9]"
+                className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold uppercase rounded-xs bg-[#471319] text-[#FFF5E9]"
               >
                 <span>Browse Gatherings</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -219,21 +219,21 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
                   <div className="space-y-3">
                     <div className="flex items-start justify-between border-b border-[#3A2B27]/10 pb-3">
                       <div>
-                        <span className="text-[10px] font-mono uppercase text-[#5C1D24] font-bold">
+                        <span className="text-[10px] font-mono uppercase text-[#471319] font-bold">
                           Digital Entry Pass
                         </span>
                         <h4 className="font-gambetta text-lg font-bold text-[#3A2B27]">
                           {ticket.eventTitle}
                         </h4>
                       </div>
-                      <div className="font-mono text-xs font-bold text-[#5C1D24] bg-[#F6EADB] px-2.5 py-1 rounded-xs">
+                      <div className="font-mono text-xs font-bold text-[#471319] bg-[#F6EADB] px-2.5 py-1 rounded-xs">
                         {ticket.ticketCode}
                       </div>
                     </div>
 
                     <div className="space-y-1.5 text-xs font-mono text-[#725C54]">
                       <div className="flex items-center gap-2 text-[#3A2B27]">
-                        <Clock className="w-3.5 h-3.5 text-[#5C1D24]" />
+                        <Clock className="w-3.5 h-3.5 text-[#471319]" />
                         <span>{ticket.eventDate}</span>
                       </div>
                       <div className="flex items-start gap-2">
@@ -261,7 +261,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
                       data-cursor="pointer"
                       className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold rounded-xs bg-[#F6EADB] text-[#3A2B27] hover:bg-[#EBE2D4] transition-colors"
                     >
-                      <CalendarPlus className="w-3.5 h-3.5 text-[#5C1D24]" />
+                      <CalendarPlus className="w-3.5 h-3.5 text-[#471319]" />
                       <span>Google Cal</span>
                     </button>
                     <button
@@ -285,7 +285,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
         <div className="space-y-6">
           {(!currentUser.donations || currentUser.donations.length === 0) ? (
             <div className="text-center py-16 bg-[#FFFFFF] rounded-xs border border-[#3A2B27]/15 p-8 space-y-4">
-              <Flame className="w-10 h-10 text-[#5C1D24] mx-auto opacity-50" />
+              <Flame className="w-10 h-10 text-[#471319] mx-auto opacity-50" />
               <h4 className="font-gambetta text-xl font-bold text-[#3A2B27]">
                 No Patronage Grants Recorded
               </h4>
@@ -295,7 +295,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
               <button
                 onClick={onMakeDonation}
                 data-cursor="pointer"
-                className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold uppercase rounded-xs bg-[#5C1D24] text-[#FFF5E9]"
+                className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold uppercase rounded-xs bg-[#471319] text-[#FFF5E9]"
               >
                 <span>Support the Foundation</span>
               </button>
@@ -322,7 +322,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
                   </div>
 
                   <div className="text-right flex sm:flex-col items-center sm:items-end justify-between">
-                    <div className="font-serif text-2xl font-bold text-[#5C1D24]">
+                    <div className="font-serif text-2xl font-bold text-[#471319]">
                       ₹{don.amount.toLocaleString('en-IN')}
                     </div>
                     <span className="text-[10px] text-[#8A8E3E] font-mono uppercase font-bold">

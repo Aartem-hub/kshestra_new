@@ -64,7 +64,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
         {/* Section Header: Broadsheet Program Masthead */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b-2 border-[#3A2B27] pb-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#5C1D24] font-bold">
+            <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#471319] font-bold">
               <Calendar className="w-3.5 h-3.5 text-[#8A8E3E]" />
               <span>LIVE CONFLUENCES · CALENDAR</span>
             </div>
@@ -78,7 +78,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
             </p>
           </div>
 
-          <div className="font-mono text-xs text-[#725C54] border-l-2 border-[#5C1D24] pl-4 py-1">
+          <div className="font-mono text-xs text-[#725C54] border-l-2 border-[#471319] pl-4 py-1">
             <span className="font-bold text-[#3A2B27] uppercase block">Kolkata Physical Sanctum</span>
             <span>Intimate Capacity · Fair Artist Compensation</span>
           </div>
@@ -87,7 +87,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
         {/* 1. HIGHLIGHTED EVENT BIG ON TOP (Fixed spotlight) */}
         {spotlightEvent && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-[#5C1D24] font-bold">
+            <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-[#471319] font-bold">
               <span className="flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-[#8A8E3E]" />
                 <span>FEATURED HIGHLIGHT CONFLUENCE</span>
@@ -113,7 +113,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
                     <span>SPOTLIGHT CONFLUENCE</span>
                   </div>
 
-                  <div className="absolute top-4 right-4 bg-[#5C1D24] text-[#FFF5E9] px-2.5 py-1 text-xs font-mono font-bold uppercase rounded-xs">
+                  <div className="absolute top-4 right-4 bg-[#471319] text-[#FFF5E9] px-2.5 py-1 text-xs font-mono font-bold uppercase rounded-xs">
                     {spotlightEvent.availableTickets} PASSES REMAINING
                   </div>
 
@@ -132,7 +132,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
                   
                   <div className="space-y-4">
                     <div className="flex items-center justify-between text-xs font-mono text-[#725C54] border-b border-[#3A2B27]/15 pb-2">
-                      <span className="text-[#5C1D24] font-bold">{spotlightEvent.date}</span>
+                      <span className="text-[#471319] font-bold">{spotlightEvent.date}</span>
                       <span>{spotlightEvent.time || '18:30 IST'}</span>
                     </div>
 
@@ -141,7 +141,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
                     </p>
 
                     <div className="flex items-center gap-2 text-xs font-mono text-[#725C54] pt-2">
-                      <MapPin className="w-4 h-4 text-[#5C1D24] shrink-0" />
+                      <MapPin className="w-4 h-4 text-[#471319] shrink-0" />
                       <span>{spotlightEvent.venue}</span>
                     </div>
 
@@ -178,7 +178,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
                         onBuyTicket(spotlightEvent);
                       }}
                       data-cursor="pointer"
-                      className="w-full inline-flex items-center justify-center gap-3 px-6 py-3.5 text-xs font-bold uppercase tracking-[0.18em] rounded-xs bg-[#5C1D24] hover:bg-[#431319] text-[#FFF5E9] border border-[#3A2B27]/20 shadow-md transition-all"
+                      className="w-full inline-flex items-center justify-center gap-3 px-6 py-3.5 text-xs font-bold uppercase tracking-[0.18em] rounded-xs bg-[#471319] hover:bg-[#471319] text-[#FFF5E9] border border-[#3A2B27]/20 shadow-md transition-all"
                     >
                       <Ticket className="w-4 h-4 text-[#8A8E3E]" />
                       <span>Reserve Digital Pass</span>
@@ -198,7 +198,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#3A2B27]/15 pb-4">
             <div>
-              <span className="text-xs font-mono uppercase tracking-widest text-[#5C1D24] font-bold block">
+              <span className="text-xs font-mono uppercase tracking-widest text-[#471319] font-bold block">
                 FULL CALENDAR SCHEDULE
               </span>
               <h3 className="font-gambetta text-2xl sm:text-3xl font-bold text-[#3A2B27]">
@@ -218,7 +218,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
                   data-cursor="pointer"
                   className={`px-3 py-1 rounded-xs uppercase tracking-wider transition-all font-semibold ${
                     activeFilter === filter
-                      ? 'bg-[#5C1D24] text-[#FFF5E9] border border-[#5C1D24]'
+                      ? 'bg-[#471319] text-[#FFF5E9] border border-[#471319]'
                       : 'bg-[#F6EADB] text-[#3A2B27] hover:bg-[#EBE2D4] border border-[#8A8E3E]/30 hover:border-[#8A8E3E]'
                   }`}
                 >
@@ -252,7 +252,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
 
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-gambetta text-lg sm:text-xl font-bold text-[#3A2B27] hover:text-[#5C1D24] transition-colors">
+                        <span className="font-gambetta text-lg sm:text-xl font-bold text-[#3A2B27] hover:text-[#471319] transition-colors">
                           {evt.title}
                         </span>
                       </div>
@@ -263,7 +263,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
                         </span>
                         <span>·</span>
                         <span className="flex items-center gap-1">
-                          <MapPin className="w-3 h-3 text-[#5C1D24]" />
+                          <MapPin className="w-3 h-3 text-[#471319]" />
                           {evt.venue} ({evt.city})
                         </span>
                         <span>·</span>
@@ -289,7 +289,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
                         onBuyTicket(evt);
                       }}
                       data-cursor="pointer"
-                      className="px-4 py-2 bg-[#5C1D24] hover:bg-[#431319] text-[#FFF5E9] font-mono text-xs font-bold uppercase tracking-wider rounded-xs transition-colors flex items-center gap-1.5 shadow-xs"
+                      className="px-4 py-2 bg-[#471319] hover:bg-[#471319] text-[#FFF5E9] font-mono text-xs font-bold uppercase tracking-wider rounded-xs transition-colors flex items-center gap-1.5 shadow-xs"
                     >
                       <Ticket className="w-3.5 h-3.5 text-[#8A8E3E]" />
                       <span>Book Pass</span>

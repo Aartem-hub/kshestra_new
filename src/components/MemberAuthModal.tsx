@@ -104,7 +104,7 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
         {/* Header */}
         <div className="bg-[#F6EADB] text-[#3A2B27] p-6 flex items-center justify-between border-b border-[#3A2B27]/15">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-sm bg-[#5C1D24] flex items-center justify-center p-1.5 shadow-xs">
+            <div className="w-9 h-9 rounded-sm bg-[#471319] flex items-center justify-center p-1.5 shadow-xs">
               <KshestraLogo variant="white" className="w-full h-full text-[#FFF5E9]" />
             </div>
             <div>
@@ -119,7 +119,7 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
           <button
             onClick={onClose}
             data-cursor="pointer"
-            className="p-1.5 hover:bg-[#5C1D24]/10 rounded-sm text-[#3A2B27] transition-colors"
+            className="p-1.5 hover:bg-[#471319]/10 rounded-sm text-[#3A2B27] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -132,7 +132,7 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
           <div className="bg-[#F6EADB] p-3 rounded-sm border border-[#3A2B27]/10 space-y-2">
             <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-[#725C54]">
               <span>Quick Preview Logins:</span>
-              <span className="text-[#5C1D24] font-bold">Demo Ready</span>
+              <span className="text-[#471319] font-bold">Demo Ready</span>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -147,7 +147,7 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
                 type="button"
                 onClick={handleQuickDemoAdmin}
                 data-cursor="pointer"
-                className="px-2.5 py-1.5 text-xs font-semibold rounded-sm bg-[#FFF5E9] hover:bg-[#FFFFFF] text-[#5C1D24] border border-[#3A2B27]/15 transition-colors text-left truncate"
+                className="px-2.5 py-1.5 text-xs font-semibold rounded-sm bg-[#FFF5E9] hover:bg-[#FFFFFF] text-[#471319] border border-[#3A2B27]/15 transition-colors text-left truncate"
               >
                 🛡️ Trustee Desk
               </button>
@@ -163,7 +163,7 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
                   onClick={() => setAuthMode('signin')}
                   className={`flex-1 py-1 text-center transition-colors ${
                     authMode === 'signin'
-                      ? 'text-[#5C1D24] border-b-2 border-[#5C1D24]'
+                      ? 'text-[#471319] border-b-2 border-[#471319]'
                       : 'text-[#725C54] hover:text-[#3A2B27]'
                   }`}
                 >
@@ -174,7 +174,7 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
                   onClick={() => setAuthMode('signup')}
                   className={`flex-1 py-1 text-center transition-colors ${
                     authMode === 'signup'
-                      ? 'text-[#5C1D24] border-b-2 border-[#5C1D24]'
+                      ? 'text-[#471319] border-b-2 border-[#471319]'
                       : 'text-[#725C54] hover:text-[#3A2B27]'
                   }`}
                 >
@@ -193,7 +193,7 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Suman Sengupta"
-                    className="w-full px-3.5 py-2 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#5C1D24] focus:outline-none"
+                    className="w-full px-3.5 py-2 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#471319] focus:outline-none"
                   />
                 </div>
               )}
@@ -208,18 +208,18 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="e.g. artist@domain.com"
-                  className="w-full px-3.5 py-2 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#5C1D24] focus:outline-none"
+                  className="w-full px-3.5 py-2 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#471319] focus:outline-none"
                 />
               </div>
 
               {errorMsg && (
-                <p className="text-xs text-[#5C1D24] font-medium">{errorMsg}</p>
+                <p className="text-xs text-[#471319] font-medium">{errorMsg}</p>
               )}
 
               <button
                 type="submit"
                 data-cursor="pointer"
-                className="w-full py-3 text-xs font-bold uppercase tracking-wider rounded-sm bg-[#5C1D24] hover:bg-[#431319] text-[#FFF5E9] border border-[#3A2B27]/20 shadow-xs transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 text-xs font-bold uppercase tracking-wider rounded-sm bg-[#471319] hover:bg-[#471319] text-[#FFF5E9] border border-[#3A2B27]/20 shadow-xs transition-all flex items-center justify-center gap-2"
               >
                 <span>Dispatch One-Time Verification Pass</span>
                 <ArrowRight className="w-4 h-4" />
@@ -227,12 +227,12 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
             </form>
           ) : (
             <form onSubmit={handleVerifyAndLogin} className="space-y-4">
-              <div className="bg-[#FFF5E9] p-3 rounded-sm border border-[#5C1D24]/30 space-y-1">
-                <div className="text-[11px] font-mono uppercase text-[#5C1D24] font-bold">
+              <div className="bg-[#FFF5E9] p-3 rounded-sm border border-[#471319]/30 space-y-1">
+                <div className="text-[11px] font-mono uppercase text-[#471319] font-bold">
                   Authentication Dispatch Sent
                 </div>
                 <p className="text-xs text-[#725C54]">
-                  For prototype access, your code is: <strong className="text-[#5C1D24] font-mono text-sm">{sentCode}</strong>
+                  For prototype access, your code is: <strong className="text-[#471319] font-mono text-sm">{sentCode}</strong>
                 </p>
               </div>
 
@@ -246,18 +246,18 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value)}
                   placeholder="e.g. 829104"
-                  className="w-full px-3.5 py-2.5 text-center font-mono text-base tracking-widest bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#5C1D24] focus:outline-none"
+                  className="w-full px-3.5 py-2.5 text-center font-mono text-base tracking-widest bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#471319] focus:outline-none"
                 />
               </div>
 
               {errorMsg && (
-                <p className="text-xs text-[#5C1D24] font-medium">{errorMsg}</p>
+                <p className="text-xs text-[#471319] font-medium">{errorMsg}</p>
               )}
 
               <button
                 type="submit"
                 data-cursor="pointer"
-                className="w-full py-3 text-xs font-bold uppercase tracking-wider rounded-sm bg-[#5C1D24] hover:bg-[#431319] text-[#FFF5E9] border border-[#3A2B27]/20 shadow-xs transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 text-xs font-bold uppercase tracking-wider rounded-sm bg-[#471319] hover:bg-[#471319] text-[#FFF5E9] border border-[#3A2B27]/20 shadow-xs transition-all flex items-center justify-center gap-2"
               >
                 <span>Verify & Enter Sanctuary</span>
                 <CheckCircle2 className="w-4 h-4 text-[#8A8E3E]" />

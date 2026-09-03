@@ -100,12 +100,12 @@ export const AdminDashboard: React.FC = () => {
       {/* Header Banner */}
       <div className="sanctum-card rounded-sm p-6 sm:p-8 bg-[#F6EADB] text-[#3A2B27] flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs border border-[#3A2B27]/20">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-sm bg-[#5C1D24] flex items-center justify-center p-2 shadow-xs">
+          <div className="w-12 h-12 rounded-sm bg-[#471319] flex items-center justify-center p-2 shadow-xs">
             <KshestraLogo variant="white" className="w-full h-full text-[#FFF5E9]" />
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#5C1D24]" />
+              <ShieldCheck className="w-4 h-4 text-[#471319]" />
               <h2 className="font-serif-display text-2xl sm:text-3xl font-bold text-[#3A2B27]">
                 Trustee Administration Desk
               </h2>
@@ -120,7 +120,7 @@ export const AdminDashboard: React.FC = () => {
           <button
             onClick={() => setShowAddEventModal(true)}
             data-cursor="pointer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase rounded-sm bg-[#5C1D24] text-[#FFF5E9] hover:bg-[#431319] transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase rounded-sm bg-[#471319] text-[#FFF5E9] hover:bg-[#471319] transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>Publish Gathering</span>
@@ -134,7 +134,7 @@ export const AdminDashboard: React.FC = () => {
           <span className="text-[11px] font-mono uppercase text-[#725C54] font-semibold">
             Total Public Patronage
           </span>
-          <div className="font-serif text-3xl font-bold text-[#5C1D24]">
+          <div className="font-serif text-3xl font-bold text-[#471319]">
             ₹{totalDonationAmount.toLocaleString('en-IN')}
           </div>
           <p className="text-[11px] text-[#8A8E3E] font-mono">
@@ -172,7 +172,7 @@ export const AdminDashboard: React.FC = () => {
         <button
           onClick={() => setActiveTab('events')}
           className={`py-3 px-5 border-b-2 flex items-center gap-2 ${
-            activeTab === 'events' ? 'border-[#5C1D24] text-[#5C1D24]' : 'border-transparent text-[#725C54]'
+            activeTab === 'events' ? 'border-[#471319] text-[#471319]' : 'border-transparent text-[#725C54]'
           }`}
         >
           <Calendar className="w-4 h-4" />
@@ -182,7 +182,7 @@ export const AdminDashboard: React.FC = () => {
         <button
           onClick={() => setActiveTab('dispatches')}
           className={`py-3 px-5 border-b-2 flex items-center gap-2 ${
-            activeTab === 'dispatches' ? 'border-[#5C1D24] text-[#5C1D24]' : 'border-transparent text-[#725C54]'
+            activeTab === 'dispatches' ? 'border-[#471319] text-[#471319]' : 'border-transparent text-[#725C54]'
           }`}
         >
           <BookOpen className="w-4 h-4" />
@@ -200,7 +200,7 @@ export const AdminDashboard: React.FC = () => {
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono uppercase text-[#5C1D24] font-bold">
+                  <span className="text-[10px] font-mono uppercase text-[#471319] font-bold">
                     {evt.category}
                   </span>
                   <span className="text-xs text-[#725C54]">· {evt.date}</span>
@@ -217,7 +217,7 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   onClick={() => handleDeleteEvent(evt.id)}
                   data-cursor="pointer"
-                  className="p-2 text-[#5C1D24] hover:bg-[#5C1D24]/10 rounded-sm transition-colors"
+                  className="p-2 text-[#471319] hover:bg-[#471319]/10 rounded-sm transition-colors"
                   title="Delete Gathering"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -237,7 +237,7 @@ export const AdminDashboard: React.FC = () => {
               className="sanctum-card rounded-sm bg-[#FFFFFF] border border-[#3A2B27]/15 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               <div className="space-y-1">
-                <span className="text-[10px] font-mono uppercase text-[#5C1D24] font-bold">
+                <span className="text-[10px] font-mono uppercase text-[#471319] font-bold">
                   {disp.category} · {disp.readTime}
                 </span>
                 <h4 className="font-serif-display text-lg font-bold text-[#3A2B27]">
@@ -262,7 +262,7 @@ export const AdminDashboard: React.FC = () => {
               </h3>
               <button
                 onClick={() => setShowAddEventModal(false)}
-                className="p-1 hover:bg-[#5C1D24] hover:text-[#FFF5E9] rounded-sm"
+                className="p-1 hover:bg-[#471319] hover:text-[#FFF5E9] rounded-sm"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -334,7 +334,7 @@ export const AdminDashboard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-sm bg-[#5C1D24] text-[#FFF5E9] font-bold uppercase"
+                  className="px-5 py-2 rounded-sm bg-[#471319] text-[#FFF5E9] font-bold uppercase"
                 >
                   Publish Gathering
                 </button>

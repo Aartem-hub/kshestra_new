@@ -24,7 +24,7 @@ export const GazetteSection: React.FC = () => {
         {/* Section Header: Journal Masthead */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-2 border-[#3A2B27] pb-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#5C1D24] font-bold">
+            <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#471319] font-bold">
               <Feather className="w-3.5 h-3.5 text-[#8A8E3E]" />
               <span>VOICES FROM THE FIELD</span>
             </div>
@@ -54,7 +54,7 @@ export const GazetteSection: React.FC = () => {
                 <span className="text-[#725C54]">{leadArticle.issueNumber} · {leadArticle.readTime}</span>
               </div>
 
-              <h3 className="font-gambetta text-2xl sm:text-4xl font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors leading-tight">
+              <h3 className="font-gambetta text-2xl sm:text-4xl font-bold text-[#3A2B27] group-hover:text-[#471319] transition-colors leading-tight">
                 {leadArticle.title}
               </h3>
 
@@ -96,7 +96,7 @@ export const GazetteSection: React.FC = () => {
                       <span>{article.readTime}</span>
                     </div>
 
-                    <h4 className="font-gambetta text-lg sm:text-xl font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors leading-snug">
+                    <h4 className="font-gambetta text-lg sm:text-xl font-bold text-[#3A2B27] group-hover:text-[#471319] transition-colors leading-snug">
                       {article.title}
                     </h4>
 
@@ -130,14 +130,14 @@ export const GazetteSection: React.FC = () => {
               <button
                 onClick={() => setSelectedArticle(null)}
                 data-cursor="pointer"
-                className="absolute top-4 right-4 p-2 text-[#3A2B27] hover:bg-[#5C1D24] hover:text-[#FFF5E9] rounded-xs transition-colors border border-[#3A2B27]/20"
+                className="absolute top-4 right-4 p-2 text-[#3A2B27] hover:bg-[#471319] hover:text-[#FFF5E9] rounded-xs transition-colors border border-[#3A2B27]/20"
               >
                 <X className="w-5 h-5" />
               </button>
 
               <div className="space-y-6">
                 <div className="space-y-3 border-b-2 border-[#3A2B27] pb-4">
-                  <div className="text-xs font-mono font-bold uppercase tracking-widest text-[#5C1D24]">
+                  <div className="text-xs font-mono font-bold uppercase tracking-widest text-[#471319]">
                     {selectedArticle.category} · {selectedArticle.issueNumber}
                   </div>
                   <h2 className="font-gambetta text-3xl sm:text-4xl font-bold text-[#3A2B27] leading-tight">

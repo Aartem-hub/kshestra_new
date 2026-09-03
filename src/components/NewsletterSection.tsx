@@ -42,7 +42,7 @@ export const NewsletterSection: React.FC = () => {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-[#5C1D24] bg-[#FFF5E9] border border-[#3A2B27]/15 rounded-sm">
+          <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-[#471319] bg-[#FFF5E9] border border-[#3A2B27]/15 rounded-sm">
             <Mail className="w-3.5 h-3.5" />
             <span>NEVER MISS A CONFLUENCE</span>
           </div>
@@ -55,7 +55,7 @@ export const NewsletterSection: React.FC = () => {
             Bi-weekly field notes on craft and survival, early ticket reservations, and unlisted casting calls & residency grants delivered straight to your inbox. No promotional noise. No algorithms. Just pure dispatches.
           </p>
 
-          <div className="p-3.5 bg-[#FFF5E9] border border-[#3A2B27]/15 rounded-xs text-xs font-mono text-[#5C1D24] font-semibold flex items-center justify-center gap-2">
+          <div className="p-3.5 bg-[#FFF5E9] border border-[#3A2B27]/15 rounded-xs text-xs font-mono text-[#471319] font-semibold flex items-center justify-center gap-2">
             <Sparkles className="w-4 h-4 text-[#8A8E3E]" />
             <span>Instant Gift: Subscribers receive our curated PDF: "The Independent Creator’s Resource & Grant Directory (Kolkata Edition)"</span>
           </div>
@@ -94,7 +94,7 @@ export const NewsletterSection: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email address (e.g. artist@domain.com)"
-                    className="w-full px-4 py-3 text-sm bg-[#FFF5E9] text-[#3A2B27] border border-[#3A2B27]/20 rounded-sm focus:outline-none focus:border-[#5C1D24] transition-colors"
+                    className="w-full px-4 py-3 text-sm bg-[#FFF5E9] text-[#3A2B27] border border-[#3A2B27]/20 rounded-sm focus:outline-none focus:border-[#471319] transition-colors"
                   />
                 </div>
 
@@ -106,7 +106,7 @@ export const NewsletterSection: React.FC = () => {
                   <select
                     value={discipline}
                     onChange={(e) => setDiscipline(e.target.value)}
-                    className="w-full px-4 py-3 text-sm bg-[#FFF5E9] text-[#3A2B27] border border-[#3A2B27]/20 rounded-sm focus:outline-none focus:border-[#5C1D24] transition-colors"
+                    className="w-full px-4 py-3 text-sm bg-[#FFF5E9] text-[#3A2B27] border border-[#3A2B27]/20 rounded-sm focus:outline-none focus:border-[#471319] transition-colors"
                   >
                     <option value="">Select Primary Discipline</option>
                     {disciplines.map((d) => (
@@ -120,7 +120,7 @@ export const NewsletterSection: React.FC = () => {
               </div>
 
               {errorMsg && (
-                <p className="text-xs text-[#5C1D24] font-medium">
+                <p className="text-xs text-[#471319] font-medium">
                   {errorMsg}
                 </p>
               )}
@@ -129,7 +129,7 @@ export const NewsletterSection: React.FC = () => {
               <button
                 type="submit"
                 data-cursor="pointer"
-                className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3.5 text-xs font-bold uppercase tracking-wider rounded-xs bg-[#5C1D24] hover:bg-[#431319] text-[#FFF5E9] border border-[#3A2B27]/30 shadow-xs transition-all hover:-translate-y-0.5"
+                className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3.5 text-xs font-bold uppercase tracking-wider rounded-xs bg-[#471319] hover:bg-[#471319] text-[#FFF5E9] border border-[#3A2B27]/30 shadow-xs transition-all hover:-translate-y-0.5"
               >
                 <span>Subscribe to Dispatches & Get Free Directory ⟶</span>
               </button>

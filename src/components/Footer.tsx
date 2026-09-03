@@ -21,7 +21,7 @@ export const Footer: React.FC<FooterProps> = ({
   };
 
   return (
-    <footer className="bg-[#5C1D24] text-[#FFF5E9] border-t-2 border-[#3A2B27]/40 pt-16 pb-28 md:pb-24 px-4 sm:px-8 font-sans relative">
+    <footer className="bg-[#471319] text-[#FFF5E9] border-t-2 border-[#3A2B27]/40 pt-16 pb-28 md:pb-24 px-4 sm:px-8 font-sans relative">
       
       <div className="max-w-7xl mx-auto space-y-12">
         
@@ -50,9 +50,9 @@ export const Footer: React.FC<FooterProps> = ({
                   onOpenDonate();
                 }}
                 data-cursor="pointer"
-                className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xs bg-[#FFF5E9] hover:bg-[#FFF5E9]/90 text-[#5C1D24] border border-[#FFF5E9]/30 transition-all shadow-xs"
+                className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xs bg-[#FFF5E9] hover:bg-[#FFF5E9]/90 text-[#471319] border border-[#FFF5E9]/30 transition-all shadow-xs"
               >
-                <Flame className="w-3.5 h-3.5 text-[#5C1D24]" />
+                <Flame className="w-3.5 h-3.5 text-[#471319]" />
                 <span>Support the Flame (Donate)</span>
               </button>
             </div>
@@ -208,7 +208,7 @@ export const Footer: React.FC<FooterProps> = ({
               </button>
 
               <div className="space-y-4">
-                <div className="flex items-center gap-2 text-xs font-mono uppercase text-[#5C1D24] font-bold">
+                <div className="flex items-center gap-2 text-xs font-mono uppercase text-[#471319] font-bold">
                   <KshestraLogo preferAssetImage className="w-4 h-4" />
                   <span>Trust Document</span>
                 </div>
@@ -240,7 +240,7 @@ export const Footer: React.FC<FooterProps> = ({
 
                 <button
                   onClick={() => setActiveModal(null)}
-                  className="w-full py-2.5 bg-[#3A2B27] text-[#FFF5E9] font-mono text-xs uppercase font-bold rounded-xs mt-4 hover:bg-[#5C1D24] transition-colors"
+                  className="w-full py-2.5 bg-[#3A2B27] text-[#FFF5E9] font-mono text-xs uppercase font-bold rounded-xs mt-4 hover:bg-[#471319] transition-colors"
                 >
                   Close Document
                 </button>

@@ -81,7 +81,7 @@ export const CustomCursor: React.FC = () => {
           {/* Arrow Body: Dark Terracotta with sharp Charcoal stroke */}
           <path
             d="M3 2L9.5 21.5L13 13L21.5 9.5L3 2Z"
-            fill={isPointer ? '#5C1D24' : '#3A2B27'}
+            fill={isPointer ? '#471319' : '#3A2B27'}
             stroke="#FFF5E9"
             strokeWidth="1.5"
             strokeLinejoin="round"
@@ -89,7 +89,7 @@ export const CustomCursor: React.FC = () => {
           {/* Inner Accent Core */}
           <path
             d="M4.5 4.5L9.2 18L11.8 11.8L18 9.2L4.5 4.5Z"
-            fill={isPointer ? '#8A8E3E' : '#5C1D24'}
+            fill={isPointer ? '#8A8E3E' : '#471319'}
           />
         </svg>
 

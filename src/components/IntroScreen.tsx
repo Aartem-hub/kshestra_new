@@ -71,7 +71,7 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({ onExplore }) => {
         <div className="flex justify-between items-center text-[10px] sm:text-xs font-google-sans uppercase tracking-[0.25em] text-[#3A2B27]/45">
           <span>क्षेत्र · Kshestra</span>
           <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#5C1D24]/40 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#471319]/40 animate-pulse" />
             Sanctuary Gate
           </span>
         </div>
@@ -98,7 +98,7 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({ onExplore }) => {
                 {[0.4, 0.8, 1.0, 0.6, 0.9, 0.5, 0.7].map((heightScale, idx) => (
                   <motion.span
                     key={idx}
-                    className="w-[1.5px] rounded-full bg-[#5C1D24]/60"
+                    className="w-[1.5px] rounded-full bg-[#471319]/60"
                     animate={{
                       scaleY: [heightScale * 0.4, heightScale, heightScale * 0.3],
                       opacity: [0.4, 0.9, 0.4]
@@ -117,7 +117,7 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({ onExplore }) => {
               {/* Poetic minimal tuning text with percentage */}
               <div className="flex items-center gap-2 font-google-sans text-[11px] sm:text-xs tracking-[0.25em] uppercase text-[#3A2B27]/60">
                 <span>Tuning acoustic sanctuary</span>
-                <span className="text-[#5C1D24] font-medium tracking-normal w-9 text-right font-mono">
+                <span className="text-[#471319] font-medium tracking-normal w-9 text-right font-mono">
                   {progress}%
                 </span>
               </div>
