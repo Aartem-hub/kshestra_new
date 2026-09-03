@@ -1,6 +1,6 @@
 /**
- * Role-Based Access Control (RBAC) & Trustee Clearance Whitelist
- * Only verified accounts matching ADMIN_EMAILS possess administrative stewardship over the Trustee Desk.
+ * Role-Based Access Control (RBAC) & Administrative Clearance Verification
+ * Only verified administrative accounts possess stewardship over the administration desk.
  */
 
 export const ADMIN_EMAILS = [

@@ -5,10 +5,11 @@ import { audioSynth } from '../services/audioSynthesizer';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { collection, getDocs } from 'firebase/firestore';
-import { ADMIN_EMAILS, isEmailAdmin } from '../services/authRoles';
+import { isEmailAdmin } from '../services/authRoles';
 import { 
   ShieldCheck, 
   ShieldAlert, 
+  AlertTriangle,
   Lock, 
   Plus, 
   Trash2, 
@@ -120,7 +121,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   const fetchRegisteredArtists = async () => {
-    // Strict Guard: Prevent loading full user list if unauthenticated or non-whitelisted
+    // Strict Guard: Prevent loading full user list if unauthenticated or lacking administrative clearance
     if (!auth.currentUser || !isEmailAdmin(auth.currentUser.email)) {
       setRegisteredArtists([]);
       setIsLoadingArtists(false);
@@ -257,7 +258,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   // -------------------------------------------------------------
-  // GUARD: Unauthenticated OR Non-Whitelisted Access Restriction
+  // GUARD: Access Restriction (Clearance Denied & Warning)
   // -------------------------------------------------------------
   if (!isAuthResolving && !isAuthorizedAdmin) {
     return (
@@ -266,7 +267,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
-          className="sanctum-card rounded-sm bg-[#FFF5E9] border-2 border-[#471319]/30 p-6 sm:p-10 shadow-xl text-[#3A2B27] space-y-8"
+          className="sanctum-card rounded-sm bg-[#FFF5E9] border-2 border-[#471319]/40 p-6 sm:p-10 shadow-xl text-[#3A2B27] space-y-8"
         >
           {/* Top Seal & Monogram */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-[#3A2B27]/15">
@@ -277,10 +278,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="space-y-1">
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#471319]/10 text-[#471319] text-[10px] font-mono uppercase font-bold tracking-wider">
                   <ShieldAlert className="w-3.5 h-3.5" />
-                  <span>Administrative Clearance Required</span>
+                  <span>Access Restricted</span>
                 </div>
-                <h2 className="font-serif-display text-2xl sm:text-3xl font-bold text-[#3A2B27]">
-                  Sanctuary Restrict: Trustee Clearance Required
+                <h2 className="font-serif-display text-2xl sm:text-3xl font-bold text-[#471319]">
+                  Clearance Denied
                 </h2>
               </div>
             </div>
@@ -296,70 +297,57 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             )}
           </div>
 
-          {/* Explanation Text */}
-          <div className="space-y-4 text-sm text-[#3A2B27] leading-relaxed">
-            <p className="text-[#3A2B27] font-serif text-base sm:text-lg">
-              The <strong>Trustee Administration Desk</strong> is reserved exclusively for authorized curators, 
-              cultural trustees, and fiscal stewards of the <strong>Kshestra Cultural Trust</strong>.
+          {/* Security Warning Box */}
+          <div className="p-4 sm:p-5 rounded-xs bg-[#471319]/10 border-l-4 border-[#471319] space-y-2">
+            <div className="flex items-center gap-2 font-mono text-xs uppercase font-bold text-[#471319] tracking-wider">
+              <AlertTriangle className="w-4 h-4 text-[#471319] shrink-0" />
+              <span>Warning: Restricted Area</span>
+            </div>
+            <p className="text-xs sm:text-sm text-[#3A2B27] font-medium leading-relaxed">
+              Access to this administrative section is strictly restricted. You do not possess the required clearance credentials.
             </p>
-            <p className="text-[#725C54] text-xs sm:text-sm">
-              In accordance with sanctuary governance and artist confidentiality, access to the resident artist registry, 
-              confidential passes ledger, and sanctum dispatch management is strictly gated behind verified Trustee credentials.
+            <p className="text-[11px] text-[#725C54] font-mono">
+              All unauthorized access attempts are monitored and recorded.
             </p>
           </div>
 
-          {/* Current Auth Status Card */}
+          {/* Current Session Status Card */}
           <div className="p-4 sm:p-5 rounded-sm bg-[#F6EADB] border border-[#3A2B27]/15 space-y-3">
             <div className="text-[11px] font-mono uppercase tracking-wider text-[#725C54] font-bold">
               Current Session Status:
             </div>
             
             {currentUserEmail ? (
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFFFFF] p-3 rounded-xs border border-[#3A2B27]/15">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFFFFF] p-3.5 rounded-xs border border-[#3A2B27]/15">
                 <div className="space-y-0.5">
                   <div className="text-xs font-semibold text-[#3A2B27]">
                     Signed in as: <span className="font-mono text-[#471319] font-bold">{currentUserEmail}</span>
                   </div>
                   <div className="text-[11px] text-[#725C54] font-mono">
-                    Tier: Standard Resident Artist (Non-Trustee)
+                    Status: Clearance Denied (Insufficient Permissions)
                   </div>
                 </div>
-                <span className="inline-flex items-center gap-1 text-[11px] text-[#471319] font-mono font-bold px-2 py-1 bg-[#471319]/10 rounded-xs self-start sm:self-auto">
+                <span className="inline-flex items-center gap-1 text-[11px] text-[#471319] font-mono font-bold px-2.5 py-1 bg-[#471319]/10 rounded-xs self-start sm:self-auto">
                   <Lock className="w-3 h-3" />
                   <span>Clearance Denied</span>
                 </span>
               </div>
             ) : (
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFFFFF] p-3 rounded-xs border border-[#3A2B27]/15">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFFFFF] p-3.5 rounded-xs border border-[#3A2B27]/15">
                 <div className="space-y-0.5">
                   <div className="text-xs font-semibold text-[#3A2B27]">
-                    Visitor Status: <span className="font-mono text-[#725C54]">Unauthenticated</span>
+                    Session Status: <span className="font-mono text-[#725C54]">Unauthenticated</span>
                   </div>
                   <div className="text-[11px] text-[#725C54] font-mono">
-                    No active sanctuary session detected
+                    No active credentials detected
                   </div>
                 </div>
-                <span className="inline-flex items-center gap-1 text-[11px] text-[#725C54] font-mono px-2 py-1 bg-[#3A2B27]/5 rounded-xs self-start sm:self-auto">
+                <span className="inline-flex items-center gap-1 text-[11px] text-[#725C54] font-mono px-2.5 py-1 bg-[#3A2B27]/5 rounded-xs self-start sm:self-auto">
                   <Lock className="w-3 h-3" />
                   <span>Unauthenticated</span>
                 </span>
               </div>
             )}
-
-            {/* Whitelisted Accounts Notice */}
-            <div className="pt-2 text-[11px] text-[#725C54] space-y-1.5 border-t border-[#3A2B27]/10">
-              <span className="font-semibold text-[#3A2B27] block">Authorized Trustee Whitelist:</span>
-              <div className="flex flex-wrap gap-2">
-                {ADMIN_EMAILS.map((email) => (
-                  <span 
-                    key={email}
-                    className="font-mono text-[10px] px-2 py-1 bg-[#FFF5E9] text-[#3A2B27] border border-[#3A2B27]/20 rounded-xs font-semibold"
-                  >
-                    {email}
-                  </span>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Action CTAs */}
@@ -373,7 +361,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xs bg-[#471319] text-[#FFF5E9] text-xs font-bold uppercase tracking-wider hover:bg-[#471319]/90 transition-all shadow-md"
             >
               <LogIn className="w-4 h-4" />
-              <span>Enter the Sanctuary / Sign In as Trustee</span>
+              <span>Authenticate Credentials</span>
             </button>
 
             {onReturnToMain && (

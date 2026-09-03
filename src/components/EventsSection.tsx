@@ -57,7 +57,11 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ onBuyTicket }) => 
   };
 
   return (
-    <section id="events-section" className="py-20 md:py-28 px-4 sm:px-8 border-b border-[#3A2B27]/15 bg-[#FFF5E9] relative">
+    <section id="events-section" data-section="gatherings" className="scroll-mt-24 py-20 md:py-28 px-4 sm:px-8 border-b border-[#3A2B27]/15 bg-[#FFF5E9] relative">
+      {/* Anchor targets for direct hash routing and smooth scroll */}
+      <div id="gatherings-section" className="absolute -top-24 pointer-events-none" />
+      <div id="events" className="absolute -top-24 pointer-events-none" />
+      <div id="gatherings" className="absolute -top-24 pointer-events-none" />
       
       <div className="max-w-7xl mx-auto space-y-12 relative z-10">
         

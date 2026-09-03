@@ -11,10 +11,10 @@ import {
   updateProfile 
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { X, ArrowRight, Eye, EyeOff, Loader2, Copy, Check, AlertCircle, ShieldCheck } from 'lucide-react';
+import { X, ArrowRight, Eye, EyeOff, Loader2, Copy, Check, AlertCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 import { KshestraLogo } from './KshestraLogo';
-import { ADMIN_EMAILS, isEmailAdmin } from '../services/authRoles';
+import { isEmailAdmin } from '../services/authRoles';
 
 interface MemberAuthModalProps {
   onClose: () => void;
@@ -31,7 +31,6 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [trusteePromptMsg, setTrusteePromptMsg] = useState('');
   const [isUnauthorizedDomain, setIsUnauthorizedDomain] = useState(false);
   const [copiedDomain, setCopiedDomain] = useState(false);
 
@@ -197,6 +196,7 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
     setIsLoading(true);
     try {
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
       const cred = await signInWithPopup(auth, provider);
       const member = await syncFirestoreUser(cred.user);
       audioSynth.playChime();
@@ -214,17 +214,8 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
     }
   };
 
-  const handleQuickDemoAdmin = () => {
-    audioSynth.playChime();
-    setAuthMode('signin');
-    setEmail('chairperson@kshestra.com');
-    setTrusteePromptMsg('Trustee Clearance Required: Please sign in with an authorized trustee credential. Select one of the whitelisted accounts below and enter your password.');
-    setErrorMsg('');
-  };
-
   const handleQuickDemoMember = () => {
     audioSynth.playChime();
-    setTrusteePromptMsg('');
     const member = StorageService.loginAsMember('resident@kshestra.com', 'Resident Creator');
     onSuccess(member);
   };
@@ -265,70 +256,23 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
         <div className="p-5 sm:p-6 space-y-5">
           
           {/* Quick Demo Access Bar */}
-          <div className="bg-[#F6EADB] p-3 rounded-sm border border-[#3A2B27]/10 space-y-2">
-            <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-[#725C54]">
-              <span>Quick Preview Logins:</span>
-              <span className="text-[#471319] font-bold">Demo Ready</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={handleQuickDemoMember}
-                data-cursor="pointer"
-                className="px-2.5 py-1.5 text-xs font-semibold rounded-sm bg-[#FFF5E9] hover:bg-[#FFFFFF] text-[#3A2B27] border border-[#3A2B27]/15 transition-colors text-left truncate"
-              >
-                👤 Resident Creator
-              </button>
-              <button
-                type="button"
-                onClick={handleQuickDemoAdmin}
-                data-cursor="pointer"
-                className="px-2.5 py-1.5 text-xs font-semibold rounded-sm bg-[#FFF5E9] hover:bg-[#FFFFFF] text-[#471319] border border-[#3A2B27]/15 transition-colors text-left truncate"
-              >
-                🛡️ Trustee Desk
-              </button>
-            </div>
-
-            {/* Trustee Clearance Prompt Banner */}
-            {trusteePromptMsg && (
-              <div className="mt-2 p-3 bg-[#471319]/10 border border-[#471319]/30 rounded-xs space-y-2 text-xs text-[#3A2B27]">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 font-semibold text-[#471319]">
-                    <ShieldCheck className="w-4 h-4 shrink-0" />
-                    <span>Trustee Clearance Whitelist</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setTrusteePromptMsg('')}
-                    className="text-[#725C54] hover:text-[#3A2B27] text-xs font-bold px-1"
-                  >
-                    ✕
-                  </button>
-                </div>
-                <p className="text-[11px] text-[#725C54] leading-relaxed">
-                  The Trustee Desk requires an authorized admin credential. Select a whitelisted account to sign in:
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {ADMIN_EMAILS.map((adminEmail) => (
-                    <button
-                      key={adminEmail}
-                      type="button"
-                      onClick={() => {
-                        setEmail(adminEmail);
-                        audioSynth.playChime();
-                      }}
-                      className={`px-2 py-1 text-[10px] font-mono rounded-xs border transition-colors ${
-                        email.toLowerCase() === adminEmail.toLowerCase()
-                          ? 'bg-[#471319] text-[#FFF5E9] border-[#471319] font-bold'
-                          : 'bg-[#FFFFFF] text-[#3A2B27] border-[#3A2B27]/20 hover:border-[#471319]'
-                      }`}
-                    >
-                      {adminEmail}
-                    </button>
-                  ))}
-                </div>
+          <div className="bg-[#F6EADB] p-3 rounded-sm border border-[#3A2B27]/10 flex items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#725C54]">
+                Sanctuary Preview:
               </div>
-            )}
+              <div className="text-xs font-semibold text-[#3A2B27]">
+                Instant Resident Creator Session
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleQuickDemoMember}
+              data-cursor="pointer"
+              className="px-3 py-1.5 text-xs font-semibold rounded-sm bg-[#FFF5E9] hover:bg-[#FFFFFF] text-[#3A2B27] border border-[#3A2B27]/15 transition-colors shadow-xs"
+            >
+              👤 Enter as Resident
+            </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

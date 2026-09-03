@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Routes, Route, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 import { CustomCursor } from './components/CustomCursor';
 import { ThreeArtCanvas } from './components/ThreeArtCanvas';
 import { Header } from './components/Header';
@@ -30,12 +31,102 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { IntroScreen } from './components/IntroScreen';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft } from 'lucide-react';
 import Lenis from 'lenis';
 
+/**
+ * Route Component for Resident Creator Profile (/profile/:username)
+ */
+function ProfileRouteView({
+  onExploreEvents,
+  onExploreGallery,
+  onMakeDonation,
+  onOpenAuth,
+  onScrollToSection
+}: {
+  onExploreEvents: () => void;
+  onExploreGallery: () => void;
+  onMakeDonation: () => void;
+  onOpenAuth: () => void;
+  onScrollToSection: (id: string) => void;
+}) {
+  const { username } = useParams<{ username: string }>();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="min-h-screen flex flex-col justify-between"
+    >
+      <div>
+        <MemberDashboard
+          profileUsername={username}
+          onExploreEvents={onExploreEvents}
+          onExploreGallery={onExploreGallery}
+          onMakeDonation={onMakeDonation}
+          onOpenAuth={onOpenAuth}
+        />
+      </div>
+      <Footer
+        onScrollToSection={onScrollToSection}
+        onOpenDonate={onMakeDonation}
+      />
+    </motion.div>
+  );
+}
+
+/**
+ * Route Component for Gatherings & Confluences (/events)
+ */
+function EventsRouteView({
+  onBuyTicket,
+  onInitiateDonation,
+  onScrollToSection
+}: {
+  onBuyTicket: (event: EventItem) => void;
+  onInitiateDonation: (amount: number, tierId?: string, tierName?: string) => void;
+  onScrollToSection: (id: string) => void;
+}) {
+  useEffect(() => {
+    // Scroll smoothly to events program upon navigation
+    const el = document.getElementById('events-section');
+    if (el) {
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }, 80);
+    }
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-12"
+    >
+      <EventsSection onBuyTicket={onBuyTicket} />
+      <DonationPortal onInitiateDonation={onInitiateDonation} />
+      <Footer
+        onScrollToSection={onScrollToSection}
+        onOpenDonate={() => onScrollToSection('donate-portal')}
+      />
+    </motion.div>
+  );
+}
+
+/**
+ * Main Application Component with Universal Layout and Subpaths
+ */
 export default function App() {
   const [hasEntered, setHasEntered] = useState<boolean>(false);
-  const [currentView, setCurrentView] = useState<'main' | 'member-dashboard' | 'admin'>('main');
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Dynamic header height measurement to completely prevent awkward cutoff lines
+  const [headerHeight, setHeaderHeight] = useState<number>(120);
+  const headerRef = useRef<HTMLElement | null>(null);
 
   // Modals state
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
@@ -51,6 +142,26 @@ export default function App() {
   });
 
   const [currentUser, setCurrentUser] = useState<UserMember | null>(null);
+
+  useEffect(() => {
+    // Dynamically calculate header height for seamless padding
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        setHeaderHeight(headerRef.current.offsetHeight);
+      }
+    };
+    updateHeaderHeight();
+
+    const ro = new ResizeObserver(updateHeaderHeight);
+    if (headerRef.current) {
+      ro.observe(headerRef.current);
+    }
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', updateHeaderHeight);
+    };
+  }, []);
 
   useEffect(() => {
     // Initialise seed storage
@@ -76,76 +187,74 @@ export default function App() {
 
     const handleAuthChange = (e: any) => {
       setCurrentUser(e.detail);
-      if (!e.detail && currentView === 'member-dashboard') {
-        setCurrentView('main');
-      }
     };
+    window.addEventListener('kshestra_auth_changed', handleAuthChange);
 
-    // Firebase Auth State Listener & Firestore users/{uid} sync
-    const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
+    // Sync Firebase Auth state
+    const unsubscribeAuth = onAuthStateChanged(auth, async (fbUser) => {
+      if (fbUser) {
+        const isAdmin = isEmailAdmin(fbUser.email);
+        const role: 'admin' | 'member' = isAdmin ? 'admin' : 'member';
+
         try {
-          const userDocRef = doc(db, 'users', firebaseUser.uid);
-          const snap = await getDoc(userDocRef);
-          let userData: any;
-          if (!snap.exists()) {
-            userData = {
-              name: firebaseUser.displayName || 'Resident Creator',
-              email: firebaseUser.email || '',
-              location: 'Kolkata, WB',
+          const userDocRef = doc(db, 'users', fbUser.uid);
+          const docSnap = await getDoc(userDocRef);
+
+          if (!docSnap.exists()) {
+            await setDoc(userDocRef, {
+              uid: fbUser.uid,
+              name: fbUser.displayName || 'Resident Creator',
+              email: fbUser.email || '',
+              role: role,
               residentSince: '2026',
+              location: 'Kolkata, WB',
+              createdAt: new Date().toISOString(),
               passes: [],
-              receipts: [],
-              createdAt: new Date().toISOString()
-            };
-            await setDoc(userDocRef, userData);
-          } else {
-            userData = snap.data();
+              receipts: []
+            });
           }
-
-          const userMember: UserMember = {
-            id: firebaseUser.uid,
-            name: userData?.name || firebaseUser.displayName || 'Resident Creator',
-            email: firebaseUser.email || userData?.email || '',
-            role: isEmailAdmin(firebaseUser.email) ? 'admin' : 'member',
-            isVerified: true,
-            memberSince: userData?.residentSince || '2026',
-            city: userData?.location || 'Kolkata, WB',
-            ticketPurchases: userData?.passes || [],
-            donations: userData?.receipts || [],
-            calendarSyncEnabled: true
-          };
-
-          StorageService.setCurrentUser(userMember);
-          setCurrentUser(userMember);
-        } catch (err) {
-          console.warn('Could not sync user with Firestore:', err);
+        } catch (dbErr) {
+          console.warn('Firestore user profile sync error:', dbErr);
         }
+
+        const member: UserMember = {
+          id: fbUser.uid,
+          name: fbUser.displayName || 'Resident Creator',
+          email: fbUser.email || '',
+          role: role,
+          isVerified: true,
+          memberSince: '2026',
+          city: 'Kolkata, WB',
+          ticketPurchases: StorageService.getCurrentUser()?.ticketPurchases || [],
+          donations: StorageService.getCurrentUser()?.donations || []
+        };
+        StorageService.setCurrentUser(member);
+        setCurrentUser(member);
       } else {
-        const storedUser = StorageService.getCurrentUser();
-        // If current stored user was a Firebase user, clear on logout
-        if (storedUser && !storedUser.id.startsWith('usr-admin-') && !storedUser.id.startsWith('usr-demo-')) {
-          StorageService.setCurrentUser(null);
+        const localUser = StorageService.getCurrentUser();
+        if (localUser && localUser.id.startsWith('usr-firebase-')) {
+          StorageService.logout();
           setCurrentUser(null);
         }
       }
     });
 
-    // Play authentic acoustic guitar sound on every button click throughout the sanctuary
+    // Auto-scroll on hash or click
     const handleGlobalButtonClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (!target) return;
-      const button = target.closest('button, [role="button"], a[role="button"]');
-      if (button) {
-        if (button.id === 'explore-sanctuary-btn' || button.getAttribute('data-no-sound') === 'true') {
-          return;
-        }
-        audioSynth.playGuitarSound();
+      const target = e.target as HTMLElement;
+      const exploreBtn = target.closest('[data-action="explore-events"]');
+      if (exploreBtn) {
+        e.preventDefault();
+        handleScrollTo('events-section');
+      }
+      const donateBtn = target.closest('[data-action="open-donate"]');
+      if (donateBtn) {
+        e.preventDefault();
+        handleScrollTo('donate-portal');
       }
     };
 
     document.addEventListener('click', handleGlobalButtonClick, true);
-    window.addEventListener('kshestra_auth_changed', handleAuthChange);
 
     return () => {
       document.removeEventListener('click', handleGlobalButtonClick, true);
@@ -154,7 +263,7 @@ export default function App() {
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };
-  }, [currentView]);
+  }, []);
 
   const handleExploreSanctuary = () => {
     audioSynth.play();
@@ -170,7 +279,7 @@ export default function App() {
     });
   };
 
-  const handleInitiateDonation = (amount: number, tierId?: string, tierName?: string) => {
+  const handleInitiateDonation = (amount: number, _tierId?: string, tierName?: string) => {
     audioSynth.playChime();
     setRazorpayModalState({
       isOpen: true,
@@ -200,48 +309,88 @@ export default function App() {
     if (!currentUser) {
       setShowAuthModal(true);
     } else {
-      setCurrentView('member-dashboard');
+      const slug = currentUser.name.toLowerCase().replace(/\s+/g, '-');
+      navigate(`/profile/${slug}`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handleOpenAdmin = () => {
     audioSynth.playChime();
-    setCurrentView('admin');
+    navigate('/trustee');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleAuthSuccess = (user: UserMember) => {
     setShowAuthModal(false);
     if (user.role === 'admin') {
-      setCurrentView('admin');
+      navigate('/trustee');
     } else {
-      setCurrentView('member-dashboard');
+      const slug = user.name.toLowerCase().replace(/\s+/g, '-');
+      navigate(`/profile/${slug}`);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleScrollTo = (sectionId: string) => {
-    if (currentView !== 'main') {
-      setCurrentView('main');
-      setTimeout(() => {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          if ((window as any).lenis) {
-            (window as any).lenis.scrollTo(el, { offset: -60, duration: 1.2 });
-          } else {
-            el.scrollIntoView({ behavior: 'smooth' });
+  useEffect(() => {
+    const targetSection = (location.state as any)?.scrollTo;
+    if (location.pathname === '/') {
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.resize();
+      }
+
+      if (targetSection) {
+        navigate('/', { replace: true, state: {} });
+
+        const performScroll = () => {
+          const l = (window as any).lenis;
+          if (l) {
+            l.resize();
           }
-        }
-      }, 100);
+          const el = document.getElementById(targetSection);
+          if (el) {
+            if (l) {
+              l.resize();
+              l.scrollTo(el, { offset: -(headerHeight || 80), duration: 1.1 });
+            } else {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        };
+
+        const timer = setTimeout(performScroll, 120);
+        return () => clearTimeout(timer);
+      }
     } else {
-      const el = document.getElementById(sectionId);
-      if (el) {
-        if ((window as any).lenis) {
-          (window as any).lenis.scrollTo(el, { offset: -60, duration: 1.2 });
-        } else {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }
+      window.scrollTo(0, 0);
+      const l = (window as any).lenis;
+      if (l) {
+        l.scrollTo(0, { immediate: true });
+        l.resize();
+      }
+    }
+  }, [location.pathname, location.state, headerHeight, navigate]);
+
+  const handleScrollTo = (sectionId: string) => {
+    audioSynth.playChime();
+    
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: sectionId } });
+      return;
+    }
+
+    const lenis = (window as any).lenis;
+    if (lenis) {
+      lenis.resize();
+    }
+    const el = document.getElementById(sectionId);
+    if (el) {
+      if (lenis) {
+        lenis.resize();
+        lenis.scrollTo(el, { offset: -(headerHeight || 80), duration: 1.1 });
+      } else {
+        el.scrollIntoView({ behavior: 'smooth' });
       }
     }
   };
@@ -255,8 +404,17 @@ export default function App() {
       {/* Organic Terracotta, Moss & Charcoal Ambient Particle Canvas */}
       <ThreeArtCanvas />
 
-      {/* 1. Header & Top Navigation with Smart Hide on Scroll Down */}
+      {/* 1. Header & Top Navigation with Smart Hide on Scroll Down & Integrated Dark Horizontal Sub-Bar */}
       <Header
+        headerRef={headerRef}
+        currentPath={location.pathname}
+        onNavigateHome={() => {
+          navigate('/');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onNavigateEvents={() => {
+          handleScrollTo('events-section');
+        }}
         onOpenAuth={handleOpenAuth}
         onOpenDashboard={handleOpenDashboard}
         onOpenAdmin={handleOpenAdmin}
@@ -264,97 +422,135 @@ export default function App() {
         onScrollToSection={handleScrollTo}
       />
 
-      {/* MAIN VIEW SWITCHER - padded for fixed header */}
-      <main className="relative z-10 w-full pt-[90px] sm:pt-[82px]">
-        
-        {/* Return to Main Home Bar when in Member or Admin Views */}
-        {currentView !== 'main' && (
-          <div className="bg-[#3A2B27] text-[#FFF5E9] py-2.5 px-4 sm:px-8 border-b border-[#3A2B27]">
-            <div className="max-w-6xl mx-auto flex items-center justify-between">
-              <button
-                onClick={() => {
-                  audioSynth.playChime();
-                  setCurrentView('main');
-                }}
-                data-cursor="pointer"
-                className="inline-flex items-center gap-2 font-mono text-xs uppercase font-bold hover:text-[#8A8E3E] transition-colors"
+      {/* MAIN VIEW CONTAINER - padded mathematically with measured headerHeight to prevent any cutoffs */}
+      <main 
+        style={{ paddingTop: `${headerHeight}px` }} 
+        className="relative z-10 w-full min-h-[calc(100vh-48px)] pb-14 sm:pb-16"
+      >
+        <Routes>
+          {/* Route 1: Primary Homepage */}
+          <Route
+            path="/"
+            element={
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
               >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Return to Sanctuary</span>
-              </button>
+                {/* 2. HERO SECTION */}
+                <HeroSection
+                  onExploreGatherings={() => handleScrollTo('events-section')}
+                  onExploreArchive={() => handleScrollTo('gallery-section')}
+                />
 
-              <div className="font-mono text-xs text-[#8A8E3E] font-bold uppercase">
-                {currentView === 'admin' ? 'Trustee Administration View' : 'Personalized Resident Vault'}
-              </div>
-            </div>
-          </div>
-        )}
+                {/* 3. THE MANIFESTO (THE SACRED GROUND) */}
+                <ManifestoSection />
 
-        {/* View 1: Main Public Kshestra Foundation Platform */}
-        {currentView === 'main' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-          >
-            {/* 2. HERO SECTION */}
-            <HeroSection
-              onExploreGatherings={() => handleScrollTo('events-section')}
-              onExploreArchive={() => handleScrollTo('gallery-section')}
-            />
+                {/* 4. GATHERINGS AT THE SANCTUARY (EVENTS & TICKETING) */}
+                <EventsSection onBuyTicket={handleBookEventTicket} />
 
-            {/* 3. THE MANIFESTO (THE SACRED GROUND) */}
-            <ManifestoSection />
+                {/* 5. THE LIVING ARCHIVE (GALLERY & PROVENANCE) */}
+                <GallerySection onPatronizeArtwork={handlePatronizeArtwork} />
 
-            {/* 4. GATHERINGS AT THE SANCTUARY (EVENTS & TICKETING) */}
-            <EventsSection onBuyTicket={handleBookEventTicket} />
+                {/* 6. GUARDIANS OF THE SANCTUARY (THE PILLARS) */}
+                <TeamSection />
 
-            {/* 5. THE LIVING ARCHIVE (GALLERY & PROVENANCE) */}
-            <GallerySection onPatronizeArtwork={handlePatronizeArtwork} />
+                {/* 7. DISPATCHES FROM THE SANCTUARY (MAGAZINE & FIELD JOURNALS) */}
+                <GazetteSection />
 
-            {/* 6. GUARDIANS OF THE SANCTUARY (THE PILLARS) */}
-            <TeamSection />
+                {/* 8. STAY IN THE CIRCLE (NEWSLETTER & DISPATCH INTAKE) */}
+                <NewsletterSection />
 
-            {/* 7. DISPATCHES FROM THE SANCTUARY (MAGAZINE & FIELD JOURNALS) */}
-            <GazetteSection />
+                {/* 9. PATRONAGE & GRANTS (PRESERVE THE FIRE / 80G GRANTS) */}
+                <DonationPortal onInitiateDonation={handleInitiateDonation} />
 
-            {/* 8. STAY IN THE CIRCLE (NEWSLETTER & DISPATCH INTAKE) */}
-            <NewsletterSection />
-
-            {/* 9. PATRONAGE & GRANTS (PRESERVE THE FIRE / 80G GRANTS) */}
-            <DonationPortal onInitiateDonation={handleInitiateDonation} />
-          </motion.div>
-        )}
-
-        {/* View 2: Personalized Resident Dashboard (Passes & Calendar Sync) */}
-        {currentView === 'member-dashboard' && (
-          <MemberDashboard
-            onExploreEvents={() => setCurrentView('main')}
-            onExploreGallery={() => setCurrentView('main')}
-            onMakeDonation={() => handleScrollTo('donate-portal')}
+                {/* 10. FOOTER */}
+                <Footer
+                  onScrollToSection={handleScrollTo}
+                  onOpenDonate={() => handleScrollTo('donate-portal')}
+                />
+              </motion.div>
+            }
           />
-        )}
 
-        {/* View 3: Trustee Admin Dashboard */}
-        {currentView === 'admin' && (
-          <AdminDashboard
-            onOpenAuth={handleOpenAuth}
-            onReturnToMain={() => setCurrentView('main')}
+          {/* Route 2: Events / Gatherings View */}
+          <Route
+            path="/events"
+            element={
+              <EventsRouteView
+                onBuyTicket={handleBookEventTicket}
+                onInitiateDonation={handleInitiateDonation}
+                onScrollToSection={handleScrollTo}
+              />
+            }
           />
-        )}
 
+          {/* Route 3: Trustee Administration Desk */}
+          <Route
+            path="/trustee"
+            element={
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="min-h-screen flex flex-col justify-between"
+              >
+                <div>
+                  <AdminDashboard
+                    onOpenAuth={handleOpenAuth}
+                    onReturnToMain={() => {
+                      navigate('/');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  />
+                </div>
+                <Footer
+                  onScrollToSection={handleScrollTo}
+                  onOpenDonate={() => handleScrollTo('donate-portal')}
+                />
+              </motion.div>
+            }
+          />
+
+          {/* Route 4: Resident Creator Profile */}
+          <Route
+            path="/profile/:username"
+            element={
+              <ProfileRouteView
+                onExploreEvents={() => {
+                  handleScrollTo('events-section');
+                }}
+                onExploreGallery={() => {
+                  navigate('/');
+                  handleScrollTo('gallery-section');
+                }}
+                onMakeDonation={() => handleScrollTo('donate-portal')}
+                onOpenAuth={handleOpenAuth}
+                onScrollToSection={handleScrollTo}
+              />
+            }
+          />
+
+          {/* Route 5: /profile Redirect to logged-in user or default resident */}
+          <Route
+            path="/profile"
+            element={
+              <Navigate
+                to={`/profile/${currentUser ? currentUser.name.toLowerCase().replace(/\s+/g, '-') : 'rayan'}`}
+                replace
+              />
+            }
+          />
+
+          {/* Catch-all: Redirect to Home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
 
-      {/* 11. BOTTOM THIRD EVENTS TICKER STRIPE */}
-      {currentView === 'main' && (
-        <BottomThirdEventsTicker onSelectEvent={handleBookEventTicket} />
-      )}
-
-      {/* 12. FOOTER */}
-      <Footer
-        onScrollToSection={handleScrollTo}
-        onOpenDonate={() => handleScrollTo('donate-portal')}
-      />
+      {/* UNIVERSAL PERSISTENT BOTTOM STICKY BAR: Audio Player & Live Events Ticker */}
+      <BottomThirdEventsTicker onSelectEvent={handleBookEventTicket} />
 
       {/* MODAL 1: Razorpay Payment Gateway (Tickets & Donations) */}
       <AnimatePresence>

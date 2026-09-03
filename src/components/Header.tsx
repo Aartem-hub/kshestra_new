@@ -28,6 +28,10 @@ interface HeaderProps {
   onOpenAdmin: () => void;
   onOpenDonate: () => void;
   onScrollToSection?: (sectionId: string) => void;
+  currentPath?: string;
+  onNavigateHome?: () => void;
+  onNavigateEvents?: () => void;
+  headerRef?: React.RefObject<HTMLElement | null>;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -35,7 +39,11 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenDashboard,
   onOpenAdmin,
   onOpenDonate,
-  onScrollToSection
+  onScrollToSection,
+  currentPath = '/',
+  onNavigateHome,
+  onNavigateEvents,
+  headerRef
 }) => {
   const [currentUser, setCurrentUser] = useState<UserMember | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -135,6 +143,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header 
+      ref={headerRef as any}
       className={`fixed top-0 left-0 right-0 z-50 bg-[#FFF5E9]/95 backdrop-blur-md border-b border-[#3A2B27]/15 shadow-xs transition-transform duration-300 ease-in-out ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
@@ -193,7 +202,10 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={() => {
             audioSynth.playChime();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (onNavigateHome) onNavigateHome();
+            else {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
           }}
           className="text-left group flex items-center gap-3.5"
           data-cursor="pointer"

@@ -20,15 +20,19 @@ import {
 } from 'lucide-react';
 
 interface MemberDashboardProps {
+  profileUsername?: string;
   onExploreEvents: () => void;
   onExploreGallery: () => void;
   onMakeDonation: () => void;
+  onOpenAuth?: () => void;
 }
 
 export const MemberDashboard: React.FC<MemberDashboardProps> = ({
+  profileUsername,
   onExploreEvents,
   onExploreGallery,
-  onMakeDonation
+  onMakeDonation,
+  onOpenAuth
 }) => {
   const [currentUser, setCurrentUser] = useState<UserMember | null>(() => StorageService.getCurrentUser());
   const [firestoreRecord, setFirestoreRecord] = useState<{
@@ -42,6 +46,29 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
   const [allArtworks, setAllArtworks] = useState<Artwork[]>([]);
   const [activeSubTab, setActiveSubTab] = useState<'passes' | 'donations'>('passes');
   const [copiedPassId, setCopiedPassId] = useState<string | null>(null);
+
+  // Format username nicely: e.g. "rayan" -> "Rayan", "sourav-ganguly" -> "Sourav Ganguly"
+  const formattedUsername = profileUsername 
+    ? profileUsername.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
+    : '';
+
+  // Look for user matching this username
+  const matchedUser = profileUsername
+    ? StorageService.getAllUsers().find(u => 
+        u.name.toLowerCase().replace(/\s+/g, '-') === profileUsername.toLowerCase() ||
+        u.name.toLowerCase() === profileUsername.toLowerCase() ||
+        u.email.toLowerCase().startsWith(profileUsername.toLowerCase())
+      )
+    : null;
+
+  const isOwner = Boolean(
+    currentUser && (
+      !profileUsername ||
+      currentUser.name.toLowerCase().replace(/\s+/g, '-') === profileUsername.toLowerCase() ||
+      currentUser.name.toLowerCase() === profileUsername.toLowerCase() ||
+      currentUser.email.toLowerCase().startsWith(profileUsername.toLowerCase())
+    )
+  );
 
   useEffect(() => {
     setCurrentUser(StorageService.getCurrentUser());
@@ -86,30 +113,47 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
     }
   }, [currentUser?.id]);
 
-  if (!currentUser && !auth.currentUser) {
+  if (!currentUser && !auth.currentUser && !profileUsername) {
     return (
-      <div className="py-24 text-center max-w-xl mx-auto px-4">
-        <h3 className="font-gambetta text-3xl font-bold text-[#471319] mb-3">
+      <div className="py-24 text-center max-w-xl mx-auto px-4 space-y-5">
+        <h3 className="font-gambetta text-3xl font-bold text-[#471319]">
           Sanctum Portal Restricted
         </h3>
-        <p className="font-sans text-sm text-[#725C54] mb-6">
+        <p className="font-sans text-sm text-[#725C54]">
           Please sign in to access your registered event passes, calendar sync, and patron records.
         </p>
+        {onOpenAuth && (
+          <button
+            onClick={() => {
+              audioSynth.playChime();
+              onOpenAuth();
+            }}
+            data-cursor="pointer"
+            className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold uppercase rounded-xs bg-[#471319] text-[#FFF5E9] shadow-xs hover:bg-[#3A2B27] transition-colors"
+          >
+            <span>Sign In to Sanctuary</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        )}
       </div>
     );
   }
 
   // Dynamic values bound to real Firestore record with local state fallback
-  const displayName = firestoreRecord?.name || currentUser?.name || auth.currentUser?.displayName || 'Resident Creator';
-  const displayEmail = firestoreRecord?.email || currentUser?.email || auth.currentUser?.email || '';
-  const displayLocation = firestoreRecord?.location || currentUser?.city || 'Kolkata, WB';
-  const displayResidentSince = firestoreRecord?.residentSince || currentUser?.memberSince || '2026';
-  const displayPasses: any[] = firestoreRecord?.passes !== undefined 
-    ? firestoreRecord.passes 
-    : (currentUser?.ticketPurchases || []);
-  const displayReceipts: any[] = firestoreRecord?.receipts !== undefined 
-    ? firestoreRecord.receipts 
-    : (currentUser?.donations || []);
+  const displayName = profileUsername
+    ? (matchedUser?.name || formattedUsername)
+    : (firestoreRecord?.name || currentUser?.name || auth.currentUser?.displayName || 'Resident Creator');
+  const displayEmail = isOwner
+    ? (firestoreRecord?.email || currentUser?.email || auth.currentUser?.email || '')
+    : (matchedUser?.email || `${(profileUsername || 'creator').toLowerCase()}@kshestra.community`);
+  const displayLocation = (isOwner ? (firestoreRecord?.location || currentUser?.city) : matchedUser?.city) || 'Kolkata, WB';
+  const displayResidentSince = (isOwner ? (firestoreRecord?.residentSince || currentUser?.memberSince) : matchedUser?.memberSince) || '2026';
+  const displayPasses: any[] = isOwner
+    ? (firestoreRecord?.passes !== undefined ? firestoreRecord.passes : (currentUser?.ticketPurchases || []))
+    : (matchedUser?.ticketPurchases || []);
+  const displayReceipts: any[] = isOwner
+    ? (firestoreRecord?.receipts !== undefined ? firestoreRecord.receipts : (currentUser?.donations || []))
+    : (matchedUser?.donations || []);
 
   const handleDownloadICS = (pass: any) => {
     audioSynth.playChime();
@@ -247,14 +291,28 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
             <Flame className="w-3.5 h-3.5 text-[#8A8E3E]" />
             <span>Support the Flame (Donate)</span>
           </button>
-          <button
-            onClick={handleLogout}
-            data-cursor="pointer"
-            className="p-2.5 text-[#725C54] hover:text-[#471319] hover:bg-[#FFF5E9] rounded-xs border border-[#3A2B27]/15 transition-colors"
-            title="Log Out (Sign Out)"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
+          {isOwner ? (
+            <button
+              onClick={handleLogout}
+              data-cursor="pointer"
+              className="p-2.5 text-[#725C54] hover:text-[#471319] hover:bg-[#FFF5E9] rounded-xs border border-[#3A2B27]/15 transition-colors"
+              title="Log Out (Sign Out)"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          ) : onOpenAuth && (
+            <button
+              onClick={() => {
+                audioSynth.playChime();
+                onOpenAuth();
+              }}
+              data-cursor="pointer"
+              className="p-2.5 text-[#3A2B27] hover:text-[#471319] hover:bg-[#FFF5E9] rounded-xs border border-[#3A2B27]/15 transition-colors text-xs font-mono font-bold uppercase"
+              title="Sign in to your Sanctuary account"
+            >
+              <span>Sign In</span>
+            </button>
+          )}
         </div>
       </div>
 
