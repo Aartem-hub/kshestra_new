@@ -45,11 +45,10 @@ class KshestraAudioEngine {
       });
 
       this.audio.addEventListener('error', () => {
-        console.info('MP3 playback fallback to acoustic drone synthesis.');
         this.isAudioFileActive = false;
       });
-    } catch (e) {
-      console.warn('Audio element initialization note:', e);
+    } catch {
+      // Audio element initialization fallback handled by drone synth
     }
   }
 
@@ -95,8 +94,8 @@ class KshestraAudioEngine {
         osc.start();
         return { osc, gain };
       });
-    } catch (err) {
-      console.warn('Drone engine note:', err);
+    } catch {
+      // Graceful fallback for synthetic drone engine
     }
   }
 
@@ -130,8 +129,8 @@ class KshestraAudioEngine {
           this.isAudioFileActive = true;
           return;
         }
-      } catch (err) {
-        console.info('Audio MP3 play attempt switched to synthesized score:', err);
+      } catch {
+        // Fallback to acoustic drone synthesis score
       }
     }
 
@@ -191,8 +190,104 @@ class KshestraAudioEngine {
     return new Uint8Array(16);
   }
 
+  private guitarBufferCache: Map<number, AudioBuffer> = new Map();
+  private lastGuitarPlayTime: number = 0;
+  private guitarNoteIndex: number = 0;
+  // Acoustic guitar notes (D major pentatonic fingerstyle chord tones: D3, F#3, A3, D4, E4, F#4, A4)
+  private readonly GUITAR_FREQUENCIES = [146.83, 185.00, 220.00, 293.66, 329.63, 369.99, 440.00];
+
+  private getAudioContext(): AudioContext | null {
+    try {
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (!this.ctx) {
+        this.ctx = new AudioCtx();
+      }
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
+      return this.ctx;
+    } catch {
+      return null;
+    }
+  }
+
+  // Synthesize an authentic acoustic guitar string pluck using Karplus-Strong physical modeling
+  private getGuitarBuffer(ctx: AudioContext, freq: number): AudioBuffer {
+    const cached = this.guitarBufferCache.get(freq);
+    if (cached) return cached;
+
+    const sampleRate = ctx.sampleRate;
+    const period = Math.max(1, Math.round(sampleRate / freq));
+    const duration = 1.4; // 1.4s natural acoustic resonance decay
+    const totalSamples = Math.floor(sampleRate * duration);
+    const buffer = ctx.createBuffer(1, totalSamples, sampleRate);
+    const data = buffer.getChannelData(0);
+
+    // Initial string pluck attack (plectrum / fingertip impulse excitation)
+    let prev = 0;
+    for (let i = 0; i < period; i++) {
+      const noise = (Math.random() * 2 - 1) * 0.45;
+      // Low-pass filter the initial excitation to produce warm wooden string timbre
+      prev = 0.65 * prev + 0.35 * noise;
+      data[i] = prev;
+    }
+
+    // Karplus-Strong feedback delay loop with string loss and acoustic damping
+    const feedback = 0.990;
+    for (let i = period; i < totalSamples; i++) {
+      const nextSample = (i - period + 1 < totalSamples) ? data[i - period + 1] : data[i - period];
+      data[i] = 0.5 * (data[i - period] + nextSample) * feedback;
+    }
+
+    this.guitarBufferCache.set(freq, buffer);
+    return buffer;
+  }
+
+  public playGuitarSound() {
+    try {
+      const nowMs = Date.now();
+      // Throttle slightly to prevent ear-fatigue on rapid repeated trigger within 60ms
+      if (nowMs - this.lastGuitarPlayTime < 60) return;
+      this.lastGuitarPlayTime = nowMs;
+
+      const ctx = this.getAudioContext();
+      if (!ctx) return;
+
+      const freq = this.GUITAR_FREQUENCIES[this.guitarNoteIndex % this.GUITAR_FREQUENCIES.length];
+      this.guitarNoteIndex = (this.guitarNoteIndex + 1) % this.GUITAR_FREQUENCIES.length;
+
+      const guitarBuffer = this.getGuitarBuffer(ctx, freq);
+      const source = ctx.createBufferSource();
+      source.buffer = guitarBuffer;
+
+      // Acoustic guitar wooden soundbox resonance filter (peaking around 190 Hz)
+      const bodyResonance = ctx.createBiquadFilter();
+      bodyResonance.type = 'peaking';
+      bodyResonance.frequency.setValueAtTime(190, ctx.currentTime);
+      bodyResonance.Q.setValueAtTime(1.4, ctx.currentTime);
+      bodyResonance.gain.setValueAtTime(3.5, ctx.currentTime);
+
+      // Gentle high cut to keep the string acoustic, warm and pleasant
+      const highCut = ctx.createBiquadFilter();
+      highCut.type = 'lowpass';
+      highCut.frequency.setValueAtTime(3800, ctx.currentTime);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.35 * Math.max(0.4, this.volume), ctx.currentTime);
+
+      source.connect(bodyResonance);
+      bodyResonance.connect(highCut);
+      highCut.connect(gain);
+      gain.connect(ctx.destination);
+
+      source.start();
+    } catch {
+      // Graceful fallback if Web Audio is restricted
+    }
+  }
+
   public playChime() {
-    // Subtle neutral interaction
+    this.playGuitarSound();
   }
 
   public start() {

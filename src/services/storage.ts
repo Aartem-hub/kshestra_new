@@ -2,7 +2,7 @@ import { EventItem, TeamMember, Artwork, GazetteArticle, UserMember, TicketPurch
 import { INITIAL_EVENTS, INITIAL_GUARDIANS, INITIAL_GALLERY_ITEMS, INITIAL_DISPATCHES } from '../data/initialData';
 
 const STORAGE_KEYS = {
-  EVENTS: 'kshestra_events_v3',
+  EVENTS: 'kshestra_events_v4',
   GUARDIANS: 'kshestra_guardians_v6',
   GALLERY: 'kshestra_gallery_v2',
   DISPATCHES: 'kshestra_dispatches_v2',
@@ -45,8 +45,8 @@ export const StorageService = {
     try {
       localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(events));
       window.dispatchEvent(new CustomEvent('kshestra_events_updated', { detail: events }));
-    } catch (e) {
-      console.error("Storage error:", e);
+    } catch {
+      // Graceful silent fallback
     }
   },
 
@@ -84,8 +84,8 @@ export const StorageService = {
   saveGuardians: (team: TeamMember[]) => {
     try {
       localStorage.setItem(STORAGE_KEYS.GUARDIANS, JSON.stringify(team));
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // Graceful silent fallback
     }
   },
 
@@ -103,8 +103,8 @@ export const StorageService = {
     try {
       localStorage.setItem(STORAGE_KEYS.GALLERY, JSON.stringify(gallery));
       window.dispatchEvent(new CustomEvent('kshestra_gallery_updated', { detail: gallery }));
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // Graceful silent fallback
     }
   },
 
@@ -121,8 +121,8 @@ export const StorageService = {
   saveDispatches: (dispatches: GazetteArticle[]) => {
     try {
       localStorage.setItem(STORAGE_KEYS.DISPATCHES, JSON.stringify(dispatches));
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // Graceful silent fallback
     }
   },
 
@@ -144,8 +144,8 @@ export const StorageService = {
         localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
       }
       window.dispatchEvent(new CustomEvent('kshestra_auth_changed', { detail: user }));
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // Graceful silent fallback
     }
   },
 
@@ -176,7 +176,11 @@ export const StorageService = {
     };
 
     const all = StorageService.getAllUsers();
-    localStorage.setItem(STORAGE_KEYS.ALL_USERS, JSON.stringify([...all, newUser]));
+    try {
+      localStorage.setItem(STORAGE_KEYS.ALL_USERS, JSON.stringify([...all, newUser]));
+    } catch {
+      // Graceful fallback
+    }
     StorageService.setCurrentUser(newUser);
     return newUser;
   },
@@ -226,8 +230,7 @@ export const StorageService = {
       }
 
       return ticket;
-    } catch (e) {
-      console.error(e);
+    } catch {
       return ticket;
     }
   },
@@ -256,8 +259,7 @@ export const StorageService = {
       }
 
       return donation;
-    } catch (e) {
-      console.error(e);
+    } catch {
       return donation;
     }
   },
@@ -271,8 +273,7 @@ export const StorageService = {
         localStorage.setItem(STORAGE_KEYS.NEWSLETTER_SUBSCRIBERS, JSON.stringify(updated));
       }
       return true;
-    } catch (e) {
-      console.error(e);
+    } catch {
       return false;
     }
   },
@@ -303,17 +304,21 @@ export const StorageService = {
 
   // Initializer
   init: () => {
-    if (!localStorage.getItem(STORAGE_KEYS.EVENTS)) {
-      localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(INITIAL_EVENTS));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.GUARDIANS)) {
-      localStorage.setItem(STORAGE_KEYS.GUARDIANS, JSON.stringify(INITIAL_GUARDIANS));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.GALLERY)) {
-      localStorage.setItem(STORAGE_KEYS.GALLERY, JSON.stringify(INITIAL_GALLERY_ITEMS));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.DISPATCHES)) {
-      localStorage.setItem(STORAGE_KEYS.DISPATCHES, JSON.stringify(INITIAL_DISPATCHES));
+    try {
+      if (!localStorage.getItem(STORAGE_KEYS.EVENTS)) {
+        localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(INITIAL_EVENTS));
+      }
+      if (!localStorage.getItem(STORAGE_KEYS.GUARDIANS)) {
+        localStorage.setItem(STORAGE_KEYS.GUARDIANS, JSON.stringify(INITIAL_GUARDIANS));
+      }
+      if (!localStorage.getItem(STORAGE_KEYS.GALLERY)) {
+        localStorage.setItem(STORAGE_KEYS.GALLERY, JSON.stringify(INITIAL_GALLERY_ITEMS));
+      }
+      if (!localStorage.getItem(STORAGE_KEYS.DISPATCHES)) {
+        localStorage.setItem(STORAGE_KEYS.DISPATCHES, JSON.stringify(INITIAL_DISPATCHES));
+      }
+    } catch {
+      // Silent in-memory fallback
     }
   }
 };

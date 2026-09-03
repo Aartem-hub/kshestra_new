@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { UserMember } from '../types';
 import { StorageService } from '../services/storage';
 import { audioSynth } from '../services/audioSynthesizer';
@@ -75,13 +76,17 @@ export const Header: React.FC<HeaderProps> = ({
       if (currentScrollY <= 30) {
         setIsVisible(true);
       } else if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
-        // Scrolling down
+        // Scrolling down: hide header and close all dropdowns/mobile menus
         setIsVisible(false);
         setDiscoverOpen(false);
         setCommunityOpen(false);
+        setMobileMenuOpen(false);
       } else if (currentScrollY < lastScrollY.current) {
-        // Scrolling up
+        // Scrolling up: reveal ONLY the navbar, ensure dropdowns and mobile menu stay closed
         setIsVisible(true);
+        setDiscoverOpen(false);
+        setCommunityOpen(false);
+        setMobileMenuOpen(false);
       }
       
       lastScrollY.current = currentScrollY;
@@ -218,37 +223,106 @@ export const Header: React.FC<HeaderProps> = ({
                 setDiscoverOpen(!discoverOpen);
                 setCommunityOpen(false);
               }}
-              className="flex items-center gap-1 py-1 text-[#3A2B27] hover:text-[#5C1D24] transition-colors tracking-wide font-sans text-sm"
+              data-cursor="pointer"
+              className={`flex items-center gap-1.5 py-1 transition-colors tracking-wide font-sans text-sm font-medium ${
+                discoverOpen ? 'text-[#5C1D24]' : 'text-[#3A2B27] hover:text-[#5C1D24]'
+              }`}
             >
               <span>Discover Kshestra</span>
-              <ChevronDown className={`w-3.5 h-3.5 text-[#725C54] transition-transform ${discoverOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${discoverOpen ? 'rotate-180 text-[#5C1D24]' : 'text-[#725C54]'}`} />
             </button>
 
-            {discoverOpen && (
-              <div className="absolute top-full left-0 mt-2 w-64 bg-[#FFF5E9] border border-[#3A2B27]/20 shadow-lg rounded-xs p-2 space-y-1 z-50">
-                <button
-                  onClick={() => handleNavTo('manifesto-section')}
-                  className="w-full text-left px-3 py-2 text-xs font-mono rounded-xs hover:bg-[#F6EADB] text-[#3A2B27] flex items-center gap-2"
+            <AnimatePresence>
+              {discoverOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                  transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute top-full left-0 mt-2.5 w-88 sm:w-96 bg-[#FFF5E9] border-2 border-[#3A2B27]/20 shadow-2xl rounded-xs p-3.5 z-50 backdrop-blur-md"
                 >
-                  <BookOpen className="w-3.5 h-3.5 text-[#5C1D24]" />
-                  <span>The Manifesto & 10 Commandments</span>
-                </button>
-                <button
-                  onClick={() => handleNavTo('trustees-section')}
-                  className="w-full text-left px-3 py-2 text-xs font-mono rounded-xs hover:bg-[#F6EADB] text-[#3A2B27] flex items-center gap-2"
-                >
-                  <Users className="w-3.5 h-3.5 text-[#8A8E3E]" />
-                  <span>Guardians & Trustees</span>
-                </button>
-                <button
-                  onClick={() => handleNavTo('gallery-section')}
-                  className="w-full text-left px-3 py-2 text-xs font-mono rounded-xs hover:bg-[#F6EADB] text-[#3A2B27] flex items-center gap-2"
-                >
-                  <ImageIcon className="w-3.5 h-3.5 text-[#8A8E3E]" />
-                  <span>The Living Archive (Past Works)</span>
-                </button>
-              </div>
-            )}
+                  {/* Subtle architectural header */}
+                  <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-[#3A2B27]/15 font-mono text-[10px] uppercase tracking-widest text-[#725C54]">
+                    <span className="flex items-center gap-1.5 text-[#5C1D24] font-bold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#5C1D24]" />
+                      <span>সন্ধান · The Sanctuary</span>
+                    </span>
+                    <span className="text-[#8A8E3E] font-medium">91/11/1 Tollygunge</span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <button
+                      onClick={() => handleNavTo('manifesto-section')}
+                      data-cursor="pointer"
+                      className="w-full text-left p-2.5 rounded-xs hover:bg-[#F6EADB] transition-all group flex items-start gap-3 border border-transparent hover:border-[#3A2B27]/10"
+                    >
+                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#5C1D24] border border-[#3A2B27]/15 group-hover:border-[#5C1D24] flex items-center justify-center shrink-0 transition-colors">
+                        <BookOpen className="w-4 h-4 text-[#5C1D24] group-hover:text-[#FFF5E9] transition-colors" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors">
+                            The Manifesto & 10 Commandments
+                          </span>
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#5C1D24] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                        </div>
+                        <p className="text-[11px] font-sans text-[#725C54] leading-relaxed mt-0.5">
+                          Uncompromising ethical covenants & 100% artist ownership.
+                        </p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => handleNavTo('trustees-section')}
+                      data-cursor="pointer"
+                      className="w-full text-left p-2.5 rounded-xs hover:bg-[#F6EADB] transition-all group flex items-start gap-3 border border-transparent hover:border-[#3A2B27]/10"
+                    >
+                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#5C1D24] border border-[#3A2B27]/15 group-hover:border-[#5C1D24] flex items-center justify-center shrink-0 transition-colors">
+                        <Users className="w-4 h-4 text-[#8A8E3E] group-hover:text-[#FFF5E9] transition-colors" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors">
+                            Guardians & Trustees
+                          </span>
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#5C1D24] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                        </div>
+                        <p className="text-[11px] font-sans text-[#725C54] leading-relaxed mt-0.5">
+                          Meet the cultural stewards and trustees safeguarding the spaces.
+                        </p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => handleNavTo('gallery-section')}
+                      data-cursor="pointer"
+                      className="w-full text-left p-2.5 rounded-xs hover:bg-[#F6EADB] transition-all group flex items-start gap-3 border border-transparent hover:border-[#3A2B27]/10"
+                    >
+                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#5C1D24] border border-[#3A2B27]/15 group-hover:border-[#5C1D24] flex items-center justify-center shrink-0 transition-colors">
+                        <ImageIcon className="w-4 h-4 text-[#8A8E3E] group-hover:text-[#FFF5E9] transition-colors" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors">
+                            The Living Archive
+                          </span>
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#5C1D24] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                        </div>
+                        <p className="text-[11px] font-sans text-[#725C54] leading-relaxed mt-0.5">
+                          Permanent gallery vault of cinema, sound works, and visual arts.
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* Bottom context strip */}
+                  <div className="mt-2.5 pt-2 border-t border-[#3A2B27]/10 flex items-center justify-between text-[10px] font-mono text-[#725C54]">
+                    <span>Non-Profit Cultural Trust</span>
+                    <span className="text-[#5C1D24] font-semibold">Kolkata Living Arts</span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Dropdown 2: The Community */}
@@ -258,37 +332,109 @@ export const Header: React.FC<HeaderProps> = ({
                 setCommunityOpen(!communityOpen);
                 setDiscoverOpen(false);
               }}
-              className="flex items-center gap-1 py-1 text-[#3A2B27] hover:text-[#5C1D24] transition-colors tracking-wide font-sans text-sm"
+              data-cursor="pointer"
+              className={`flex items-center gap-1.5 py-1 transition-colors tracking-wide font-sans text-sm font-medium ${
+                communityOpen ? 'text-[#5C1D24]' : 'text-[#3A2B27] hover:text-[#5C1D24]'
+              }`}
             >
               <span>The Community</span>
-              <ChevronDown className={`w-3.5 h-3.5 text-[#725C54] transition-transform ${communityOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${communityOpen ? 'rotate-180 text-[#5C1D24]' : 'text-[#725C54]'}`} />
             </button>
 
-            {communityOpen && (
-              <div className="absolute top-full left-0 mt-2 w-64 bg-[#FFF5E9] border border-[#3A2B27]/20 shadow-lg rounded-xs p-2 space-y-1 z-50">
-                <button
-                  onClick={() => handleNavTo('events-section')}
-                  className="w-full text-left px-3 py-2 text-xs font-mono rounded-xs hover:bg-[#F6EADB] text-[#3A2B27] flex items-center gap-2"
+            <AnimatePresence>
+              {communityOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                  transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute top-full left-0 mt-2.5 w-88 sm:w-96 bg-[#FFF5E9] border-2 border-[#3A2B27]/20 shadow-2xl rounded-xs p-3.5 z-50 backdrop-blur-md"
                 >
-                  <Calendar className="w-3.5 h-3.5 text-[#5C1D24]" />
-                  <span>Gatherings & Masterclasses (Tickets)</span>
-                </button>
-                <button
-                  onClick={() => handleNavTo('gazette-section')}
-                  className="w-full text-left px-3 py-2 text-xs font-mono rounded-xs hover:bg-[#F6EADB] text-[#3A2B27] flex items-center gap-2"
-                >
-                  <Feather className="w-3.5 h-3.5 text-[#8A8E3E]" />
-                  <span>Dispatches & Perspectives (Essays)</span>
-                </button>
-                <button
-                  onClick={() => handleNavTo('newsletter-section')}
-                  className="w-full text-left px-3 py-2 text-xs font-mono rounded-xs hover:bg-[#F6EADB] text-[#3A2B27] flex items-center gap-2"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-[#8A8E3E]" />
-                  <span>Open Calls & Creative Residencies</span>
-                </button>
-              </div>
-            )}
+                  {/* Subtle architectural header */}
+                  <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-[#3A2B27]/15 font-mono text-[10px] uppercase tracking-widest text-[#725C54]">
+                    <span className="flex items-center gap-1.5 text-[#8A8E3E] font-bold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#8A8E3E]" />
+                      <span>সমাজ · Living Collective</span>
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded-xs bg-[#5C1D24] text-[#FFF5E9] font-bold text-[9px] uppercase tracking-wider">
+                      Free Passes Active
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <button
+                      onClick={() => handleNavTo('events-section')}
+                      data-cursor="pointer"
+                      className="w-full text-left p-2.5 rounded-xs hover:bg-[#F6EADB] transition-all group flex items-start gap-3 border border-transparent hover:border-[#3A2B27]/10"
+                    >
+                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#5C1D24] border border-[#3A2B27]/15 group-hover:border-[#5C1D24] flex items-center justify-center shrink-0 transition-colors">
+                        <Calendar className="w-4 h-4 text-[#5C1D24] group-hover:text-[#FFF5E9] transition-colors" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors flex items-center gap-1.5">
+                            <span>Confluences & Masterclasses</span>
+                            <span className="text-[9px] px-1.5 py-0.2 rounded-xs bg-[#8A8E3E]/20 text-[#3A2B27] font-mono font-bold">FREE</span>
+                          </span>
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#5C1D24] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                        </div>
+                        <p className="text-[11px] font-sans text-[#725C54] leading-relaxed mt-0.5">
+                          Unplugged gatherings, improv labs, and acoustic circles in Tollygunge.
+                        </p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => handleNavTo('gazette-section')}
+                      data-cursor="pointer"
+                      className="w-full text-left p-2.5 rounded-xs hover:bg-[#F6EADB] transition-all group flex items-start gap-3 border border-transparent hover:border-[#3A2B27]/10"
+                    >
+                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#5C1D24] border border-[#3A2B27]/15 group-hover:border-[#5C1D24] flex items-center justify-center shrink-0 transition-colors">
+                        <Feather className="w-4 h-4 text-[#8A8E3E] group-hover:text-[#FFF5E9] transition-colors" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors">
+                            Dispatches & Gazette
+                          </span>
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#5C1D24] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                        </div>
+                        <p className="text-[11px] font-sans text-[#725C54] leading-relaxed mt-0.5">
+                          Essays on indigenous memory, underground cinema, and folk poetics.
+                        </p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => handleNavTo('newsletter-section')}
+                      data-cursor="pointer"
+                      className="w-full text-left p-2.5 rounded-xs hover:bg-[#F6EADB] transition-all group flex items-start gap-3 border border-transparent hover:border-[#3A2B27]/10"
+                    >
+                      <div className="w-9 h-9 rounded-xs bg-[#F6EADB] group-hover:bg-[#5C1D24] border border-[#3A2B27]/15 group-hover:border-[#5C1D24] flex items-center justify-center shrink-0 transition-colors">
+                        <Sparkles className="w-4 h-4 text-[#8A8E3E] group-hover:text-[#FFF5E9] transition-colors" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="font-gambetta text-sm font-bold text-[#3A2B27] group-hover:text-[#5C1D24] transition-colors">
+                            Open Calls & Residencies
+                          </span>
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#725C54] opacity-0 group-hover:opacity-100 group-hover:text-[#5C1D24] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                        </div>
+                        <p className="text-[11px] font-sans text-[#725C54] leading-relaxed mt-0.5">
+                          Apply for physical studio space, equipment gear, and production grants.
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* Bottom context strip */}
+                  <div className="mt-2.5 pt-2 border-t border-[#3A2B27]/10 flex items-center justify-between text-[10px] font-mono text-[#725C54]">
+                    <span>91/11/1 Tollygunge, Kolkata</span>
+                    <span className="text-[#8A8E3E] font-semibold">Open Door Policy</span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
         </nav>
@@ -354,48 +500,85 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-[#FFF5E9] border-b border-[#3A2B27]/20 px-6 py-5 space-y-4 shadow-lg animate-in slide-in-from-top duration-200">
-          <div className="space-y-3">
-            <div className="text-[10px] font-mono uppercase text-[#5C1D24] font-bold">Discover Kshestra</div>
-            <div className="grid grid-cols-1 gap-1 pl-2">
+          <div className="space-y-4">
+            <div className="border-b border-[#3A2B27]/10 pb-2 flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase text-[#5C1D24] font-bold tracking-wider">
+                সন্ধান · Discover Kshestra
+              </span>
+              <span className="text-[10px] font-mono text-[#725C54]">91/11/1 Tollygunge</span>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
               <button
                 onClick={() => handleNavTo('manifesto-section')}
-                className="text-left py-1.5 text-xs font-mono text-[#3A2B27] hover:text-[#5C1D24]"
+                className="text-left p-2 rounded-xs bg-[#F6EADB]/50 hover:bg-[#F6EADB] flex items-center gap-2.5 text-xs text-[#3A2B27]"
               >
-                ✦ The Manifesto & 10 Commandments
+                <BookOpen className="w-3.5 h-3.5 text-[#5C1D24] shrink-0" />
+                <div>
+                  <div className="font-gambetta font-bold text-sm">The Manifesto & 10 Commandments</div>
+                  <div className="text-[10px] text-[#725C54]">Ethical covenants & 100% artist rights</div>
+                </div>
               </button>
               <button
                 onClick={() => handleNavTo('trustees-section')}
-                className="text-left py-1.5 text-xs font-mono text-[#3A2B27] hover:text-[#5C1D24]"
+                className="text-left p-2 rounded-xs bg-[#F6EADB]/50 hover:bg-[#F6EADB] flex items-center gap-2.5 text-xs text-[#3A2B27]"
               >
-                ✦ Guardians & Trustees
+                <Users className="w-3.5 h-3.5 text-[#8A8E3E] shrink-0" />
+                <div>
+                  <div className="font-gambetta font-bold text-sm">Guardians & Trustees</div>
+                  <div className="text-[10px] text-[#725C54]">Custodians safeguarding the space</div>
+                </div>
               </button>
               <button
                 onClick={() => handleNavTo('gallery-section')}
-                className="text-left py-1.5 text-xs font-mono text-[#3A2B27] hover:text-[#5C1D24]"
+                className="text-left p-2 rounded-xs bg-[#F6EADB]/50 hover:bg-[#F6EADB] flex items-center gap-2.5 text-xs text-[#3A2B27]"
               >
-                ✦ The Living Archive (Past Works)
+                <ImageIcon className="w-3.5 h-3.5 text-[#8A8E3E] shrink-0" />
+                <div>
+                  <div className="font-gambetta font-bold text-sm">The Living Archive</div>
+                  <div className="text-[10px] text-[#725C54]">Vault of cinema, audio & folk art</div>
+                </div>
               </button>
             </div>
 
-            <div className="text-[10px] font-mono uppercase text-[#5C1D24] font-bold pt-2">The Community</div>
-            <div className="grid grid-cols-1 gap-1 pl-2">
+            <div className="border-b border-[#3A2B27]/10 pb-2 pt-2 flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase text-[#8A8E3E] font-bold tracking-wider">
+                সমাজ · The Community
+              </span>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-xs bg-[#5C1D24] text-[#FFF5E9] font-bold">FREE PASSES</span>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
               <button
                 onClick={() => handleNavTo('events-section')}
-                className="text-left py-1.5 text-xs font-mono text-[#3A2B27] hover:text-[#5C1D24]"
+                className="text-left p-2 rounded-xs bg-[#F6EADB]/50 hover:bg-[#F6EADB] flex items-center gap-2.5 text-xs text-[#3A2B27]"
               >
-                ✦ Gatherings & Masterclasses (Tickets)
+                <Calendar className="w-3.5 h-3.5 text-[#5C1D24] shrink-0" />
+                <div>
+                  <div className="font-gambetta font-bold text-sm flex items-center gap-2">
+                    <span>Confluences & Masterclasses</span>
+                    <span className="text-[9px] px-1 rounded-xs bg-[#8A8E3E]/20 font-mono text-[#3A2B27]">FREE</span>
+                  </div>
+                  <div className="text-[10px] text-[#725C54]">Workshops & gatherings at Tollygunge</div>
+                </div>
               </button>
               <button
                 onClick={() => handleNavTo('gazette-section')}
-                className="text-left py-1.5 text-xs font-mono text-[#3A2B27] hover:text-[#5C1D24]"
+                className="text-left p-2 rounded-xs bg-[#F6EADB]/50 hover:bg-[#F6EADB] flex items-center gap-2.5 text-xs text-[#3A2B27]"
               >
-                ✦ Dispatches & Perspectives (Essays)
+                <Feather className="w-3.5 h-3.5 text-[#8A8E3E] shrink-0" />
+                <div>
+                  <div className="font-gambetta font-bold text-sm">Dispatches & Gazette</div>
+                  <div className="text-[10px] text-[#725C54]">Essays and critical artist perspectives</div>
+                </div>
               </button>
               <button
                 onClick={() => handleNavTo('newsletter-section')}
-                className="text-left py-1.5 text-xs font-mono text-[#3A2B27] hover:text-[#5C1D24]"
+                className="text-left p-2 rounded-xs bg-[#F6EADB]/50 hover:bg-[#F6EADB] flex items-center gap-2.5 text-xs text-[#3A2B27]"
               >
-                ✦ Open Calls & Creative Residencies
+                <Sparkles className="w-3.5 h-3.5 text-[#8A8E3E] shrink-0" />
+                <div>
+                  <div className="font-gambetta font-bold text-sm">Open Calls & Residencies</div>
+                  <div className="text-[10px] text-[#725C54]">Apply for studios, gear & production grants</div>
+                </div>
               </button>
             </div>
           </div>

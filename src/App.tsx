@@ -24,11 +24,13 @@ import { Footer } from './components/Footer';
 import { EventItem, Artwork, UserMember } from './types';
 import { StorageService } from './services/storage';
 import { audioSynth } from './services/audioSynthesizer';
+import { IntroScreen } from './components/IntroScreen';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
 import Lenis from 'lenis';
 
 export default function App() {
+  const [hasEntered, setHasEntered] = useState<boolean>(false);
   const [currentView, setCurrentView] = useState<'main' | 'member-dashboard' | 'admin'>('main');
 
   // Modals state
@@ -75,13 +77,32 @@ export default function App() {
       }
     };
 
+    // Play authentic acoustic guitar sound on every button click throughout the sanctuary
+    const handleGlobalButtonClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      const button = target.closest('button, [role="button"], a[role="button"]');
+      if (button) {
+        audioSynth.playGuitarSound();
+      }
+    };
+
+    document.addEventListener('click', handleGlobalButtonClick, true);
     window.addEventListener('kshestra_auth_changed', handleAuthChange);
+
     return () => {
+      document.removeEventListener('click', handleGlobalButtonClick, true);
       window.removeEventListener('kshestra_auth_changed', handleAuthChange);
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, [currentView]);
+
+  const handleExploreSanctuary = () => {
+    audioSynth.playGuitarSound();
+    audioSynth.play();
+    setHasEntered(true);
+  };
 
   const handleBookEventTicket = (event: EventItem) => {
     audioSynth.playChime();
@@ -298,6 +319,13 @@ export default function App() {
             onClose={() => setShowAuthModal(false)}
             onSuccess={handleAuthSuccess}
           />
+        )}
+      </AnimatePresence>
+
+      {/* INTRO SCREEN / SANCTUARY ENTRANCE */}
+      <AnimatePresence>
+        {!hasEntered && (
+          <IntroScreen onExplore={handleExploreSanctuary} />
         )}
       </AnimatePresence>
 

@@ -26,10 +26,10 @@ const getMemberImageCandidates = (member: TeamMember): string[] => {
   }
   if (nameLower.includes('vireshwar') || nameLower.includes('vira')) {
     return [
-      '/assets/Images/vireshwar.png',
-      '/assets/Images/Vireshwar.png',
       '/assets/Images/vira.png',
       '/assets/Images/Vira.png',
+      '/assets/Images/vireshwar.png',
+      '/assets/Images/Vireshwar.png',
       '/assets/Images/vireshwar.jpg',
       '/assets/Images/Vireshwar.jpg'
     ];

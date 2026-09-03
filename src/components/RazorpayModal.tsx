@@ -335,7 +335,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
                   />
                 </div>
 
-                {mode === 'ticket' && event && event.price > 0 && (
+                {mode === 'ticket' && event && (
                   <div className="space-y-1">
                     <label className="text-[11px] font-mono uppercase tracking-wider text-[#725C54] block">
                       Number of Seats
@@ -346,26 +346,26 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
                         onChange={(e) => setTicketCount(parseInt(e.target.value, 10))}
                         className="px-3.5 py-2.5 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#5C1D24] focus:outline-none"
                       >
-                        <option value={1}>1 Seat (₹{event.price * 1})</option>
-                        <option value={2}>2 Seats (₹{event.price * 2})</option>
-                        <option value={3}>3 Seats (₹{event.price * 3})</option>
-                        <option value={4}>4 Seats (₹{event.price * 4})</option>
+                        <option value={1}>1 Seat {event.price > 0 ? `(₹${event.price * 1})` : '(Free Pass)'}</option>
+                        <option value={2}>2 Seats {event.price > 0 ? `(₹${event.price * 2})` : '(Free Pass)'}</option>
+                        <option value={3}>3 Seats {event.price > 0 ? `(₹${event.price * 3})` : '(Free Pass)'}</option>
+                        <option value={4}>4 Seats {event.price > 0 ? `(₹${event.price * 4})` : '(Free Pass)'}</option>
                       </select>
                       <span className="text-xs text-[#725C54] font-mono">
-                        Total: <strong className="text-[#5C1D24]">₹{totalAmount}</strong>
+                        Total: <strong className="text-[#5C1D24]">{totalAmount === 0 ? 'Free (Trust Sponsored)' : `₹${totalAmount}`}</strong>
                       </span>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Razorpay Simulation Disclaimer */}
+              {/* Gateway / Sanctuary Trust Disclaimer */}
               <div className="flex items-center justify-between text-[11px] text-[#725C54] bg-[#FFF5E9] p-2.5 rounded-sm border border-[#3A2B27]/10 font-mono">
                 <span className="flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-[#8A8E3E]" />
-                  <span>Encrypted Razorpay Gateway</span>
+                  <span>{totalAmount === 0 ? 'Trust Sponsored Pass' : 'Encrypted Razorpay Gateway'}</span>
                 </span>
-                <span>Direct Trust Credit</span>
+                <span>{totalAmount === 0 ? 'Tollygunge Sanctum' : 'Direct Trust Credit'}</span>
               </div>
 
               {/* Action Button */}
@@ -380,7 +380,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
                 ) : (
                   <>
                     <CreditCard className="w-4 h-4" />
-                    <span>Confirm & Pay ₹{totalAmount}</span>
+                    <span>{mode === 'ticket' && totalAmount === 0 ? 'Confirm Free Pass Reservation' : `Confirm & Pay ₹${totalAmount}`}</span>
                   </>
                 )}
               </button>

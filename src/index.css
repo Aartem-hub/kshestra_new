@@ -127,6 +127,10 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
+  .font-google-sans {
+    font-family: 'Google Sans', 'Product Sans', 'Plus Jakarta Sans', -apple-system, sans-serif;
+  }
+
   .font-mono-meta {
     font-family: 'Space Mono', monospace;
   }
