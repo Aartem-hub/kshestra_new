@@ -1,0 +1,6 @@
+{
+  "name": "Kshestra Foundation (ক্ষেত্র)",
+  "description": "A dedicated non-profit cultural sanctuary where independent art breathes free across India, providing physical studios, production crews, and zero-cost training.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
