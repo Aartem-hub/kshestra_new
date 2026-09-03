@@ -4,7 +4,8 @@ import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyByD5D_RUoPbeJ0EAjqBCPz1ZOxsXdilqA",
-  authDomain: "kshestra-website.firebaseapp.com",
+  // Uses VITE_FIREBASE_AUTH_DOMAIN if provided (e.g., "kshestra.com"), otherwise falls back to the default Firebase domain
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "kshestra-website.firebaseapp.com",
   projectId: "kshestra-website",
   storageBucket: "kshestra-website.firebasestorage.app",
   messagingSenderId: "281891847092",

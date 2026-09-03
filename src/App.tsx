@@ -24,6 +24,7 @@ import { Footer } from './components/Footer';
 import { EventItem, Artwork, UserMember } from './types';
 import { StorageService } from './services/storage';
 import { audioSynth } from './services/audioSynthesizer';
+import { isEmailAdmin } from './services/authRoles';
 import { auth, db } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -106,7 +107,7 @@ export default function App() {
             id: firebaseUser.uid,
             name: userData?.name || firebaseUser.displayName || 'Resident Creator',
             email: firebaseUser.email || userData?.email || '',
-            role: (firebaseUser.email && firebaseUser.email.includes('admin')) ? 'admin' : 'member',
+            role: isEmailAdmin(firebaseUser.email) ? 'admin' : 'member',
             isVerified: true,
             memberSince: userData?.residentSince || '2026',
             city: userData?.location || 'Kolkata, WB',
@@ -136,6 +137,9 @@ export default function App() {
       if (!target) return;
       const button = target.closest('button, [role="button"], a[role="button"]');
       if (button) {
+        if (button.id === 'explore-sanctuary-btn' || button.getAttribute('data-no-sound') === 'true') {
+          return;
+        }
         audioSynth.playGuitarSound();
       }
     };
@@ -153,7 +157,6 @@ export default function App() {
   }, [currentView]);
 
   const handleExploreSanctuary = () => {
-    audioSynth.playGuitarSound();
     audioSynth.play();
     setHasEntered(true);
   };
@@ -334,7 +337,10 @@ export default function App() {
 
         {/* View 3: Trustee Admin Dashboard */}
         {currentView === 'admin' && (
-          <AdminDashboard />
+          <AdminDashboard
+            onOpenAuth={handleOpenAuth}
+            onReturnToMain={() => setCurrentView('main')}
+          />
         )}
 
       </main>

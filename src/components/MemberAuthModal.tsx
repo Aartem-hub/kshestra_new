@@ -11,9 +11,10 @@ import {
   updateProfile 
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { X, ArrowRight, Eye, EyeOff, Loader2, Copy, Check, AlertCircle } from 'lucide-react';
+import { X, ArrowRight, Eye, EyeOff, Loader2, Copy, Check, AlertCircle, ShieldCheck } from 'lucide-react';
 import { motion } from 'motion/react';
 import { KshestraLogo } from './KshestraLogo';
+import { ADMIN_EMAILS, isEmailAdmin } from '../services/authRoles';
 
 interface MemberAuthModalProps {
   onClose: () => void;
@@ -30,6 +31,7 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [trusteePromptMsg, setTrusteePromptMsg] = useState('');
   const [isUnauthorizedDomain, setIsUnauthorizedDomain] = useState(false);
   const [copiedDomain, setCopiedDomain] = useState(false);
 
@@ -107,7 +109,7 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
       id: firebaseUser.uid,
       name: userData?.name || firebaseUser.displayName || 'Resident Creator',
       email: firebaseUser.email || userData?.email || '',
-      role: (firebaseUser.email && firebaseUser.email.includes('admin')) ? 'admin' : 'member',
+      role: isEmailAdmin(firebaseUser.email) ? 'admin' : 'member',
       isVerified: true,
       memberSince: userData?.residentSince || '2026',
       city: userData?.location || 'Kolkata, WB',
@@ -214,12 +216,15 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
 
   const handleQuickDemoAdmin = () => {
     audioSynth.playChime();
-    const admin = StorageService.loginAsAdmin();
-    onSuccess(admin);
+    setAuthMode('signin');
+    setEmail('chairperson@kshestra.com');
+    setTrusteePromptMsg('Trustee Clearance Required: Please sign in with an authorized trustee credential. Select one of the whitelisted accounts below and enter your password.');
+    setErrorMsg('');
   };
 
   const handleQuickDemoMember = () => {
     audioSynth.playChime();
+    setTrusteePromptMsg('');
     const member = StorageService.loginAsMember('resident@kshestra.com', 'Resident Creator');
     onSuccess(member);
   };
@@ -283,6 +288,47 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
                 🛡️ Trustee Desk
               </button>
             </div>
+
+            {/* Trustee Clearance Prompt Banner */}
+            {trusteePromptMsg && (
+              <div className="mt-2 p-3 bg-[#471319]/10 border border-[#471319]/30 rounded-xs space-y-2 text-xs text-[#3A2B27]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 font-semibold text-[#471319]">
+                    <ShieldCheck className="w-4 h-4 shrink-0" />
+                    <span>Trustee Clearance Whitelist</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setTrusteePromptMsg('')}
+                    className="text-[#725C54] hover:text-[#3A2B27] text-xs font-bold px-1"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <p className="text-[11px] text-[#725C54] leading-relaxed">
+                  The Trustee Desk requires an authorized admin credential. Select a whitelisted account to sign in:
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {ADMIN_EMAILS.map((adminEmail) => (
+                    <button
+                      key={adminEmail}
+                      type="button"
+                      onClick={() => {
+                        setEmail(adminEmail);
+                        audioSynth.playChime();
+                      }}
+                      className={`px-2 py-1 text-[10px] font-mono rounded-xs border transition-colors ${
+                        email.toLowerCase() === adminEmail.toLowerCase()
+                          ? 'bg-[#471319] text-[#FFF5E9] border-[#471319] font-bold'
+                          : 'bg-[#FFFFFF] text-[#3A2B27] border-[#3A2B27]/20 hover:border-[#471319]'
+                      }`}
+                    >
+                      {adminEmail}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

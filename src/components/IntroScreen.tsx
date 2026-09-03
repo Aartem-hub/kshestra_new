@@ -139,13 +139,14 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({ onExplore }) => {
 
               <button
                 id="explore-sanctuary-btn"
+                data-no-sound="true"
                 onClick={onExplore}
                 data-cursor="pointer"
-                className="group relative font-google-sans px-7 sm:px-9 py-2.5 sm:py-3 border border-[#3A2B27]/30 bg-[#3A2B27] text-[#FFF5E9] text-xs tracking-[0.22em] uppercase overflow-hidden hover:border-[#3A2B27] transition-all duration-300 shadow-xs hover:shadow-md"
+                className="group relative font-google-sans px-7 sm:px-9 py-2.5 sm:py-3 border border-[#5C1D24] bg-[#5C1D24] text-[#FFF5E9] text-xs tracking-[0.22em] uppercase overflow-hidden hover:border-[#5C1D24] transition-all duration-300 shadow-xs hover:shadow-md"
               >
                 {/* Subtle fill inversion animation on hover */}
                 <span className="absolute inset-0 bg-[#FFF5E9] translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                <span className="relative z-10 flex items-center gap-2 group-hover:text-[#3A2B27] transition-colors duration-300">
+                <span className="relative z-10 flex items-center gap-2 group-hover:text-[#5C1D24] transition-colors duration-300">
                   <span>EXPLORE THE SANCTUARY</span>
                   <span className="text-[10px] tracking-normal transition-transform duration-300 group-hover:translate-x-1">→</span>
                 </span>

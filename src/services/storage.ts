@@ -1,5 +1,6 @@
 import { EventItem, TeamMember, Artwork, GazetteArticle, UserMember, TicketPurchase, DonationRecord } from '../types';
 import { INITIAL_EVENTS, INITIAL_GUARDIANS, INITIAL_GALLERY_ITEMS, INITIAL_DISPATCHES } from '../data/initialData';
+import { isEmailAdmin } from './authRoles';
 
 const STORAGE_KEYS = {
   EVENTS: 'kshestra_events_v4',
@@ -16,8 +17,8 @@ const STORAGE_KEYS = {
 
 const DEFAULT_ADMIN: UserMember = {
   id: 'usr-admin-01',
-  name: 'Tamohan (Trustee Admin)',
-  email: 'admin@kshestra.com',
+  name: 'Tamohan (Trustee Chair)',
+  email: 'chairperson@kshestra.com',
   phone: '+91 98300 00192',
   role: 'admin',
   isVerified: true,
@@ -173,7 +174,7 @@ export const StorageService = {
       id: `usr-${Date.now()}`,
       name: name || email.split('@')[0],
       email: email,
-      role: email.includes('admin') ? 'admin' : 'member',
+      role: isEmailAdmin(email) ? 'admin' : 'member',
       isVerified: true,
       memberSince: '2026',
       city: 'Kolkata, WB',
