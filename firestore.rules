@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'chairperson@kshestra.com' ||
+        request.auth.token.email == 'artorgphase1@gmail.com'
+      );
+    }
+
+    // Public event schedule & inventory
+    match /events/{eventId} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (
+        isSignedIn() && 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['availableSeats', 'availableTickets'])
+      );
+    }
+
+    // Resident Creator profiles
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+      allow read: if isAdmin();
+
+      match /passes/{passId} {
+        allow read, write: if isSignedIn() && request.auth.uid == userId;
+        allow read: if isAdmin();
+      }
+
+      match /receipts/{receiptId} {
+        allow read, write: if isSignedIn() && request.auth.uid == userId;
+        allow read: if isAdmin();
+      }
+    }
+  }
+}

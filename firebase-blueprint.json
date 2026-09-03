@@ -1,0 +1,99 @@
+{
+  "entities": {
+    "Event": {
+      "title": "Event",
+      "description": "Kshestra gathering or confluence session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique event identifier" },
+        "title": { "type": "string", "description": "Event title" },
+        "date": { "type": "string", "description": "Formatted date string" },
+        "isoDate": { "type": "string", "description": "ISO date format YYYY-MM-DD" },
+        "time": { "type": "string", "description": "Time string" },
+        "venue": { "type": "string", "description": "Location / Hall" },
+        "city": { "type": "string", "description": "City" },
+        "description": { "type": "string", "description": "Event overview and artist notes" },
+        "isPaid": { "type": "boolean", "description": "True if paid pass, false if free RSVP" },
+        "price": { "type": "number", "description": "Pass price in INR" },
+        "totalSeats": { "type": "number", "description": "Total capacity" },
+        "availableSeats": { "type": "number", "description": "Remaining seats" },
+        "capacity": { "type": "number", "description": "Mirror of totalSeats" },
+        "availableTickets": { "type": "number", "description": "Mirror of availableSeats" },
+        "category": { "type": "string", "description": "Event artistic discipline category" },
+        "curatorNotes": { "type": "string", "description": "Notes from trust curator" },
+        "featuredArtists": { "type": "array", "description": "Participating artists" },
+        "coverImage": { "type": "string", "description": "Cover graphic URL" },
+        "tags": { "type": "array", "description": "Search tags" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" },
+        "createdById": { "type": "string", "description": "Admin UID creator" }
+      },
+      "required": ["title", "date", "venue", "totalSeats", "availableSeats", "isPaid", "price"]
+    },
+    "Pass": {
+      "title": "Pass",
+      "description": "Reserved digital gathering pass held by resident artist",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Pass unique ID" },
+        "eventId": { "type": "string", "description": "Event ID" },
+        "eventTitle": { "type": "string", "description": "Title of event" },
+        "eventDate": { "type": "string", "description": "Date of event" },
+        "venue": { "type": "string", "description": "Hall / Venue" },
+        "tier": { "type": "string", "description": "Free RSVP or Paid Pass" },
+        "isPaid": { "type": "boolean", "description": "Whether pass required payment" },
+        "price": { "type": "number", "description": "Price in INR" },
+        "bookedAt": { "type": "string", "description": "Booking timestamp" },
+        "status": { "type": "string", "enum": ["confirmed", "cancelled"], "description": "Pass status" },
+        "ticketCode": { "type": "string", "description": "Ticket code identifier" },
+        "buyerName": { "type": "string", "description": "Name of pass holder" },
+        "buyerEmail": { "type": "string", "description": "Email of pass holder" }
+      },
+      "required": ["id", "eventId", "eventTitle", "eventDate", "venue", "tier", "isPaid", "price", "bookedAt", "status"]
+    },
+    "Receipt": {
+      "title": "Receipt",
+      "description": "Financial or reservation transaction record",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string", "description": "Order or receipt ID" },
+        "eventTitle": { "type": "string", "description": "Event title" },
+        "amount": { "type": "number", "description": "Transaction amount in INR" },
+        "date": { "type": "string", "description": "Transaction date" }
+      },
+      "required": ["orderId", "eventTitle", "amount", "date"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Resident creator profile and credentials",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name" },
+        "email": { "type": "string", "description": "Email" },
+        "location": { "type": "string", "description": "Resident location" },
+        "residentSince": { "type": "string", "description": "Membership starting year" },
+        "passes": { "type": "array", "description": "Active and past event passes" },
+        "receipts": { "type": "array", "description": "Receipts and contribution history" },
+        "createdAt": { "type": "string", "description": "Profile creation timestamp" }
+      },
+      "required": ["email"]
+    }
+  },
+  "firestore": {
+    "/events/{eventId}": {
+      "schema": "Event",
+      "description": "Public schedule of Kshestra confluences and inventory counts"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Resident profile document"
+    },
+    "/users/{userId}/passes/{passId}": {
+      "schema": "Pass",
+      "description": "Subcollection of event passes for user"
+    },
+    "/users/{userId}/receipts/{receiptId}": {
+      "schema": "Receipt",
+      "description": "Subcollection of booking transactions for user"
+    }
+  }
+}

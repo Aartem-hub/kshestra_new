@@ -19,9 +19,10 @@ import { isEmailAdmin } from '../services/authRoles';
 interface MemberAuthModalProps {
   onClose: () => void;
   onSuccess: (user: UserMember) => void;
+  initialNotice?: string | null;
 }
 
-export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuccess }) => {
+export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuccess, initialNotice }) => {
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
 
   // Form Fields
@@ -255,6 +256,21 @@ export const MemberAuthModal: React.FC<MemberAuthModalProps> = ({ onClose, onSuc
         {/* Content */}
         <div className="p-5 sm:p-6 space-y-5">
           
+          {/* Booking / Access Gate Intercept Notice */}
+          {initialNotice && (
+            <div className="bg-[#471319]/10 border border-[#471319]/30 rounded-sm p-3.5 flex items-start gap-3 text-xs text-[#3A2B27]">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-[#471319]" />
+              <div className="space-y-1">
+                <span className="font-mono text-[10px] uppercase font-bold text-[#471319] tracking-wider block">
+                  Membership Verification Required
+                </span>
+                <p className="font-sans leading-relaxed text-[#3A2B27]">
+                  {initialNotice}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Quick Demo Access Bar */}
           <div className="bg-[#F6EADB] p-3 rounded-sm border border-[#3A2B27]/10 flex items-center justify-between gap-3">
             <div className="space-y-0.5">

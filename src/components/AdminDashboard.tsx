@@ -6,6 +6,7 @@ import { auth, db } from '../firebase';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { collection, getDocs } from 'firebase/firestore';
 import { isEmailAdmin } from '../services/authRoles';
+import { createAdminEvent, deleteAdminEvent, subscribeToEvents } from '../services/eventsService';
 import { 
   ShieldCheck, 
   ShieldAlert, 

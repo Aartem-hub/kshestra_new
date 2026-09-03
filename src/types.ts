@@ -20,15 +20,21 @@ export interface EventItem {
   venue: string;
   city: string;
   price: number; // INR
+  isPaid?: boolean;
   category: EventCategory;
   capacity: number;
+  totalSeats?: number;
   availableTickets: number;
+  availableSeats?: number;
+  tier?: string;
   description: string;
   curatorNotes: string;
   featuredArtists: string[];
   coverImage: string;
   tags: string[];
   isSoldOut?: boolean;
+  createdAt?: any;
+  createdById?: string;
 }
 
 export interface TeamMember {
@@ -151,4 +157,31 @@ export interface UserMember {
   ticketPurchases?: TicketPurchase[];
   donations?: DonationRecord[];
   calendarSyncEnabled?: boolean;
+}
+
+export interface UserPass {
+  id: string;
+  eventId: string;
+  eventTitle: string;
+  eventDate: string;
+  venue: string;
+  tier: 'Free RSVP' | 'Paid Pass' | string;
+  isPaid: boolean;
+  price: number;
+  bookedAt: string;
+  status: 'confirmed' | 'cancelled';
+  ticketCode?: string;
+  buyerName?: string;
+  buyerEmail?: string;
+  eventTime?: string;
+  ticketCount?: number;
+  totalAmount?: number;
+  purchaseDate?: string;
+}
+
+export interface UserReceipt {
+  orderId: string;
+  eventTitle: string;
+  amount: number;
+  date: string;
 }
