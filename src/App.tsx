@@ -24,6 +24,9 @@ import { Footer } from './components/Footer';
 import { EventItem, Artwork, UserMember } from './types';
 import { StorageService } from './services/storage';
 import { audioSynth } from './services/audioSynthesizer';
+import { auth, db } from './firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { IntroScreen } from './components/IntroScreen';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
@@ -77,6 +80,56 @@ export default function App() {
       }
     };
 
+    // Firebase Auth State Listener & Firestore users/{uid} sync
+    const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          const snap = await getDoc(userDocRef);
+          let userData: any;
+          if (!snap.exists()) {
+            userData = {
+              name: firebaseUser.displayName || 'Resident Creator',
+              email: firebaseUser.email || '',
+              location: 'Kolkata, WB',
+              residentSince: '2026',
+              passes: [],
+              receipts: [],
+              createdAt: new Date().toISOString()
+            };
+            await setDoc(userDocRef, userData);
+          } else {
+            userData = snap.data();
+          }
+
+          const userMember: UserMember = {
+            id: firebaseUser.uid,
+            name: userData?.name || firebaseUser.displayName || 'Resident Creator',
+            email: firebaseUser.email || userData?.email || '',
+            role: (firebaseUser.email && firebaseUser.email.includes('admin')) ? 'admin' : 'member',
+            isVerified: true,
+            memberSince: userData?.residentSince || '2026',
+            city: userData?.location || 'Kolkata, WB',
+            ticketPurchases: userData?.passes || [],
+            donations: userData?.receipts || [],
+            calendarSyncEnabled: true
+          };
+
+          StorageService.setCurrentUser(userMember);
+          setCurrentUser(userMember);
+        } catch (err) {
+          console.warn('Could not sync user with Firestore:', err);
+        }
+      } else {
+        const storedUser = StorageService.getCurrentUser();
+        // If current stored user was a Firebase user, clear on logout
+        if (storedUser && !storedUser.id.startsWith('usr-admin-') && !storedUser.id.startsWith('usr-demo-')) {
+          StorageService.setCurrentUser(null);
+          setCurrentUser(null);
+        }
+      }
+    });
+
     // Play authentic acoustic guitar sound on every button click throughout the sanctuary
     const handleGlobalButtonClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
@@ -93,6 +146,7 @@ export default function App() {
     return () => {
       document.removeEventListener('click', handleGlobalButtonClick, true);
       window.removeEventListener('kshestra_auth_changed', handleAuthChange);
+      unsubscribeAuth();
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };

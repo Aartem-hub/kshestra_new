@@ -3,6 +3,9 @@ import { UserMember, TicketPurchase, Artwork, DonationRecord } from '../types';
 import { StorageService } from '../services/storage';
 import { downloadICSFile, generateGoogleCalendarUrl } from '../services/calendarSync';
 import { audioSynth } from '../services/audioSynthesizer';
+import { auth, db } from '../firebase';
+import { signOut } from 'firebase/auth';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { 
   User, 
   Calendar, 
@@ -27,7 +30,15 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
   onExploreGallery,
   onMakeDonation
 }) => {
-  const [currentUser, setCurrentUser] = useState<UserMember | null>(null);
+  const [currentUser, setCurrentUser] = useState<UserMember | null>(() => StorageService.getCurrentUser());
+  const [firestoreRecord, setFirestoreRecord] = useState<{
+    name?: string;
+    email?: string;
+    location?: string;
+    residentSince?: string;
+    passes?: any[];
+    receipts?: any[];
+  } | null>(null);
   const [allArtworks, setAllArtworks] = useState<Artwork[]>([]);
   const [activeSubTab, setActiveSubTab] = useState<'passes' | 'donations'>('passes');
   const [copiedPassId, setCopiedPassId] = useState<string | null>(null);
@@ -43,7 +54,39 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
     return () => window.removeEventListener('kshestra_auth_changed', handleAuthChange);
   }, []);
 
-  if (!currentUser) {
+  // Dynamically listen to real Firestore record at users/{uid}
+  useEffect(() => {
+    const uid = auth.currentUser?.uid || (currentUser?.id && !currentUser.id.startsWith('usr-') ? currentUser.id : null);
+    if (!uid) {
+      setFirestoreRecord(null);
+      return;
+    }
+
+    try {
+      const userDocRef = doc(db, 'users', uid);
+      const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setFirestoreRecord({
+            name: data.name || auth.currentUser?.displayName || currentUser?.name || 'Resident Creator',
+            email: data.email || auth.currentUser?.email || currentUser?.email || '',
+            location: data.location || currentUser?.city || 'Kolkata, WB',
+            residentSince: data.residentSince || currentUser?.memberSince || '2026',
+            passes: Array.isArray(data.passes) ? data.passes : [],
+            receipts: Array.isArray(data.receipts) ? data.receipts : []
+          });
+        }
+      }, (err) => {
+        console.warn('Firestore snapshot listener notice:', err);
+      });
+
+      return () => unsubscribe();
+    } catch (listenerErr) {
+      console.warn('Could not establish Firestore listener:', listenerErr);
+    }
+  }, [currentUser?.id]);
+
+  if (!currentUser && !auth.currentUser) {
     return (
       <div className="py-24 text-center max-w-xl mx-auto px-4">
         <h3 className="font-gambetta text-3xl font-bold text-[#471319] mb-3">
@@ -56,63 +99,119 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
     );
   }
 
-  const handleDownloadICS = (ticket: TicketPurchase) => {
+  // Dynamic values bound to real Firestore record with local state fallback
+  const displayName = firestoreRecord?.name || currentUser?.name || auth.currentUser?.displayName || 'Resident Creator';
+  const displayEmail = firestoreRecord?.email || currentUser?.email || auth.currentUser?.email || '';
+  const displayLocation = firestoreRecord?.location || currentUser?.city || 'Kolkata, WB';
+  const displayResidentSince = firestoreRecord?.residentSince || currentUser?.memberSince || '2026';
+  const displayPasses: any[] = firestoreRecord?.passes !== undefined 
+    ? firestoreRecord.passes 
+    : (currentUser?.ticketPurchases || []);
+  const displayReceipts: any[] = firestoreRecord?.receipts !== undefined 
+    ? firestoreRecord.receipts 
+    : (currentUser?.donations || []);
+
+  const handleDownloadICS = (pass: any) => {
     audioSynth.playChime();
     const events = StorageService.getEvents();
-    const event = events.find(e => e.id === ticket.eventId) || {
-      id: ticket.eventId,
-      title: ticket.eventTitle,
-      date: ticket.eventDate,
+    const event = events.find(e => e.id === pass.eventId) || {
+      id: pass.eventId || 'evt-01',
+      title: pass.eventTitle || pass.title || 'Sanctuary Confluence',
+      date: pass.eventDate || pass.date || 'October 2026',
       isoDate: '2026-10-10',
-      time: ticket.eventTime,
-      venue: ticket.eventVenue,
+      time: pass.eventTime || pass.time || '18:00 IST',
+      venue: pass.eventVenue || pass.venue || 'Kshestra Main Stage',
       city: 'Kolkata',
-      price: ticket.totalAmount,
+      price: pass.totalAmount || 0,
       category: 'Live Gathering' as const,
       capacity: 100,
       availableTickets: 50,
-      description: `Official Kshestra Confluence: ${ticket.eventTitle}`,
+      description: `Official Kshestra Confluence: ${pass.eventTitle || pass.title || 'Sanctuary Confluence'}`,
       curatorNotes: '',
       featuredArtists: [],
       coverImage: '',
       tags: []
     };
 
-    downloadICSFile(event, ticket);
-    setCopiedPassId(ticket.id);
+    const ticketObj: TicketPurchase = {
+      id: pass.id || `pass-${Date.now()}`,
+      eventId: event.id,
+      eventTitle: event.title,
+      eventDate: event.date,
+      eventTime: event.time,
+      eventVenue: event.venue,
+      buyerName: pass.buyerName || displayName,
+      buyerEmail: pass.buyerEmail || displayEmail,
+      buyerPhone: pass.buyerPhone || '',
+      ticketCount: pass.ticketCount || 1,
+      totalAmount: pass.totalAmount || 0,
+      purchaseDate: pass.purchaseDate || new Date().toISOString().split('T')[0],
+      ticketCode: pass.ticketCode || pass.code || 'KSH-PASS',
+      qrData: pass.qrData || pass.ticketCode || 'KSH',
+      paymentId: pass.paymentId || 'pay_confirmed',
+      status: 'confirmed'
+    };
+
+    downloadICSFile(event, ticketObj);
+    setCopiedPassId(ticketObj.id);
     setTimeout(() => setCopiedPassId(null), 2500);
   };
 
-  const handleGoogleCalendar = (ticket: TicketPurchase) => {
+  const handleGoogleCalendar = (pass: any) => {
     audioSynth.playChime();
     const events = StorageService.getEvents();
-    const event = events.find(e => e.id === ticket.eventId) || {
-      id: ticket.eventId,
-      title: ticket.eventTitle,
-      date: ticket.eventDate,
+    const event = events.find(e => e.id === pass.eventId) || {
+      id: pass.eventId || 'evt-01',
+      title: pass.eventTitle || pass.title || 'Sanctuary Confluence',
+      date: pass.eventDate || pass.date || 'October 2026',
       isoDate: '2026-10-10',
-      time: ticket.eventTime,
-      venue: ticket.eventVenue,
+      time: pass.eventTime || pass.time || '18:00 IST',
+      venue: pass.eventVenue || pass.venue || 'Kshestra Main Stage',
       city: 'Kolkata',
-      price: ticket.totalAmount,
+      price: pass.totalAmount || 0,
       category: 'Live Gathering' as const,
       capacity: 100,
       availableTickets: 50,
-      description: `Official Kshestra Confluence: ${ticket.eventTitle}`,
+      description: `Official Kshestra Confluence: ${pass.eventTitle || pass.title || 'Sanctuary Confluence'}`,
       curatorNotes: '',
       featuredArtists: [],
       coverImage: '',
       tags: []
     };
 
-    const url = generateGoogleCalendarUrl(event, ticket);
+    const ticketObj: TicketPurchase = {
+      id: pass.id || `pass-${Date.now()}`,
+      eventId: event.id,
+      eventTitle: event.title,
+      eventDate: event.date,
+      eventTime: event.time,
+      eventVenue: event.venue,
+      buyerName: pass.buyerName || displayName,
+      buyerEmail: pass.buyerEmail || displayEmail,
+      buyerPhone: pass.buyerPhone || '',
+      ticketCount: pass.ticketCount || 1,
+      totalAmount: pass.totalAmount || 0,
+      purchaseDate: pass.purchaseDate || new Date().toISOString().split('T')[0],
+      ticketCode: pass.ticketCode || pass.code || 'KSH-PASS',
+      qrData: pass.qrData || pass.ticketCode || 'KSH',
+      paymentId: pass.paymentId || 'pay_confirmed',
+      status: 'confirmed'
+    };
+
+    const url = generateGoogleCalendarUrl(event, ticketObj);
     window.open(url, '_blank');
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     audioSynth.playChime();
+    try {
+      await signOut(auth);
+    } catch (err) {
+      console.error('Firebase signOut error:', err);
+    }
     StorageService.logout();
     setCurrentUser(null);
+    setFirestoreRecord(null);
   };
 
   return (
@@ -121,20 +220,20 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
       {/* 1. Header Profile Banner */}
       <div className="rounded-xs p-6 sm:p-8 bg-[#FFFFFF] border border-[#3A2B27]/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-xs bg-[#471319] text-[#FFF5E9] flex items-center justify-center font-serif text-2xl font-bold shadow-xs">
-            {currentUser.name.charAt(0)}
+          <div className="w-14 h-14 rounded-xs bg-[#471319] text-[#FFF5E9] flex items-center justify-center font-serif text-2xl font-bold shadow-xs shrink-0">
+            {displayName.charAt(0).toUpperCase()}
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h2 className="font-gambetta text-2xl sm:text-3xl font-bold text-[#3A2B27]">
-                {currentUser.name}
+                {displayName}
               </h2>
               <span className="px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider rounded-xs bg-[#8A8E3E]/10 text-[#8A8E3E] font-semibold border border-[#8A8E3E]/30">
                 Verified Resident
               </span>
             </div>
             <p className="text-xs text-[#725C54] font-mono">
-              {currentUser.email} · Resident Since {currentUser.memberSince} · {currentUser.city}
+              {displayEmail} · Resident Since {displayResidentSince} · {displayLocation}
             </p>
           </div>
         </div>
@@ -152,7 +251,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
             onClick={handleLogout}
             data-cursor="pointer"
             className="p-2.5 text-[#725C54] hover:text-[#471319] hover:bg-[#FFF5E9] rounded-xs border border-[#3A2B27]/15 transition-colors"
-            title="Log Out"
+            title="Log Out (Sign Out)"
           >
             <LogOut className="w-4 h-4" />
           </button>
@@ -171,7 +270,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
           }`}
         >
           <Ticket className="w-4 h-4" />
-          <span>Reserved Gathering Passes ({currentUser.ticketPurchases?.length || 0})</span>
+          <span>Reserved Gathering Passes ({displayPasses.length})</span>
         </button>
 
         <button
@@ -184,14 +283,14 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
           }`}
         >
           <Flame className="w-4 h-4" />
-          <span>Patronage & 80G Receipts ({currentUser.donations?.length || 0})</span>
+          <span>Patronage & 80G Receipts ({displayReceipts.length})</span>
         </button>
       </div>
 
       {/* 3. Passes Tab */}
       {activeSubTab === 'passes' && (
         <div className="space-y-6">
-          {(!currentUser.ticketPurchases || currentUser.ticketPurchases.length === 0) ? (
+          {displayPasses.length === 0 ? (
             <div className="text-center py-16 bg-[#FFFFFF] rounded-xs border border-[#3A2B27]/15 p-8 space-y-4">
               <Ticket className="w-10 h-10 text-[#725C54] mx-auto opacity-50" />
               <h4 className="font-gambetta text-xl font-bold text-[#3A2B27]">
@@ -211,70 +310,80 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {currentUser.ticketPurchases.map((ticket) => (
-                <div
-                  key={ticket.id}
-                  className="rounded-xs bg-[#FFFFFF] border border-[#3A2B27]/15 p-6 space-y-4 shadow-xs flex flex-col justify-between"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between border-b border-[#3A2B27]/10 pb-3">
-                      <div>
-                        <span className="text-[10px] font-mono uppercase text-[#471319] font-bold">
-                          Digital Entry Pass
-                        </span>
-                        <h4 className="font-gambetta text-lg font-bold text-[#3A2B27]">
-                          {ticket.eventTitle}
-                        </h4>
+              {displayPasses.map((pass: any, idx: number) => {
+                const passId = pass.id || `pass-${idx}`;
+                const passTitle = pass.eventTitle || pass.title || 'Sanctuary Confluence';
+                const passCode = pass.ticketCode || pass.code || `KSH-${1000 + idx}`;
+                const passDate = pass.eventDate || pass.date || 'October 2026';
+                const passVenue = pass.eventVenue || pass.venue || 'Kshestra Main Stage';
+                const passName = pass.buyerName || pass.name || displayName;
+                const passSeats = pass.ticketCount || pass.count || 1;
+
+                return (
+                  <div
+                    key={passId}
+                    className="rounded-xs bg-[#FFFFFF] border border-[#3A2B27]/15 p-6 space-y-4 shadow-xs flex flex-col justify-between"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between border-b border-[#3A2B27]/10 pb-3">
+                        <div>
+                          <span className="text-[10px] font-mono uppercase text-[#471319] font-bold">
+                            Digital Entry Pass
+                          </span>
+                          <h4 className="font-gambetta text-lg font-bold text-[#3A2B27]">
+                            {passTitle}
+                          </h4>
+                        </div>
+                        <div className="font-mono text-xs font-bold text-[#471319] bg-[#F6EADB] px-2.5 py-1 rounded-xs">
+                          {passCode}
+                        </div>
                       </div>
-                      <div className="font-mono text-xs font-bold text-[#471319] bg-[#F6EADB] px-2.5 py-1 rounded-xs">
-                        {ticket.ticketCode}
+
+                      <div className="space-y-1.5 text-xs font-mono text-[#725C54]">
+                        <div className="flex items-center gap-2 text-[#3A2B27]">
+                          <Clock className="w-3.5 h-3.5 text-[#471319]" />
+                          <span>{passDate}</span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <MapPin className="w-3.5 h-3.5 text-[#8A8E3E] shrink-0 mt-0.5" />
+                          <span>{passVenue}</span>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-[#FFF5E9] rounded-xs border border-[#3A2B27]/10 flex items-center justify-between text-xs">
+                        <div>
+                          <span className="text-[#725C54] block text-[10px]">Registered Name</span>
+                          <span className="font-semibold text-[#3A2B27]">{passName} ({passSeats} Seat{passSeats > 1 ? 's' : ''})</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[#725C54] block text-[10px]">Pass Status</span>
+                          <span className="font-bold text-[#8A8E3E] uppercase">Confirmed</span>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="space-y-1.5 text-xs font-mono text-[#725C54]">
-                      <div className="flex items-center gap-2 text-[#3A2B27]">
-                        <Clock className="w-3.5 h-3.5 text-[#471319]" />
-                        <span>{ticket.eventDate}</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <MapPin className="w-3.5 h-3.5 text-[#8A8E3E] shrink-0 mt-0.5" />
-                        <span>{ticket.eventVenue}</span>
-                      </div>
-                    </div>
-
-                    <div className="p-3 bg-[#FFF5E9] rounded-xs border border-[#3A2B27]/10 flex items-center justify-between text-xs">
-                      <div>
-                        <span className="text-[#725C54] block text-[10px]">Registered Name</span>
-                        <span className="font-semibold text-[#3A2B27]">{ticket.buyerName} ({ticket.ticketCount} Seat)</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-[#725C54] block text-[10px]">Pass Status</span>
-                        <span className="font-bold text-[#8A8E3E] uppercase">Confirmed</span>
-                      </div>
+                    {/* Pass Actions: Calendar & ICS */}
+                    <div className="pt-3 border-t border-[#3A2B27]/10 flex gap-2">
+                      <button
+                        onClick={() => handleGoogleCalendar(pass)}
+                        data-cursor="pointer"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold rounded-xs bg-[#F6EADB] text-[#3A2B27] hover:bg-[#EBE2D4] transition-colors"
+                      >
+                        <CalendarPlus className="w-3.5 h-3.5 text-[#471319]" />
+                        <span>Google Cal</span>
+                      </button>
+                      <button
+                        onClick={() => handleDownloadICS(pass)}
+                        data-cursor="pointer"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold rounded-xs bg-[#FFF5E9] text-[#3A2B27] hover:bg-[#F6EADB] border border-[#3A2B27]/15 transition-colors"
+                      >
+                        <Download className="w-3.5 h-3.5 text-[#8A8E3E]" />
+                        <span>{copiedPassId === passId ? 'Exported!' : 'Apple / Outlook .ICS'}</span>
+                      </button>
                     </div>
                   </div>
-
-                  {/* Pass Actions: Calendar & ICS */}
-                  <div className="pt-3 border-t border-[#3A2B27]/10 flex gap-2">
-                    <button
-                      onClick={() => handleGoogleCalendar(ticket)}
-                      data-cursor="pointer"
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold rounded-xs bg-[#F6EADB] text-[#3A2B27] hover:bg-[#EBE2D4] transition-colors"
-                    >
-                      <CalendarPlus className="w-3.5 h-3.5 text-[#471319]" />
-                      <span>Google Cal</span>
-                    </button>
-                    <button
-                      onClick={() => handleDownloadICS(ticket)}
-                      data-cursor="pointer"
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold rounded-xs bg-[#FFF5E9] text-[#3A2B27] hover:bg-[#F6EADB] border border-[#3A2B27]/15 transition-colors"
-                    >
-                      <Download className="w-3.5 h-3.5 text-[#8A8E3E]" />
-                      <span>{copiedPassId === ticket.id ? 'Exported!' : 'Apple / Outlook .ICS'}</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -283,7 +392,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
       {/* 4. Donations Tab */}
       {activeSubTab === 'donations' && (
         <div className="space-y-6">
-          {(!currentUser.donations || currentUser.donations.length === 0) ? (
+          {displayReceipts.length === 0 ? (
             <div className="text-center py-16 bg-[#FFFFFF] rounded-xs border border-[#3A2B27]/15 p-8 space-y-4">
               <Flame className="w-10 h-10 text-[#471319] mx-auto opacity-50" />
               <h4 className="font-gambetta text-xl font-bold text-[#3A2B27]">
@@ -302,35 +411,44 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
             </div>
           ) : (
             <div className="space-y-4">
-              {currentUser.donations.map((don) => (
-                <div
-                  key={don.id}
-                  className="rounded-xs bg-[#FFFFFF] border border-[#3A2B27]/15 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-gambetta text-lg font-bold text-[#3A2B27]">
-                        {don.tierName}
-                      </span>
-                      <span className="px-2 py-0.5 text-[10px] font-mono uppercase bg-[#8A8E3E]/10 text-[#8A8E3E] rounded-xs">
-                        80G Exemption Valid
-                      </span>
-                    </div>
-                    <p className="text-xs text-[#725C54] font-mono">
-                      Donation ID: {don.paymentId} · Date: {don.date} · Donor: {don.donorName}
-                    </p>
-                  </div>
+              {displayReceipts.map((don: any, idx: number) => {
+                const receiptId = don.id || `don-${idx}`;
+                const tier = don.tierName || don.tier || 'Sanctuary Contribution';
+                const donAmount = Number(don.amount) || 0;
+                const paymentId = don.paymentId || don.receiptNumber || `pay_${receiptId}`;
+                const donDate = don.date || '2026';
+                const donor = don.donorName || don.name || displayName;
 
-                  <div className="text-right flex sm:flex-col items-center sm:items-end justify-between">
-                    <div className="font-serif text-2xl font-bold text-[#471319]">
-                      ₹{don.amount.toLocaleString('en-IN')}
+                return (
+                  <div
+                    key={receiptId}
+                    className="rounded-xs bg-[#FFFFFF] border border-[#3A2B27]/15 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-gambetta text-lg font-bold text-[#3A2B27]">
+                          {tier}
+                        </span>
+                        <span className="px-2 py-0.5 text-[10px] font-mono uppercase bg-[#8A8E3E]/10 text-[#8A8E3E] rounded-xs">
+                          80G Exemption Valid
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#725C54] font-mono">
+                        Donation ID: {paymentId} · Date: {donDate} · Donor: {donor}
+                      </p>
                     </div>
-                    <span className="text-[10px] text-[#8A8E3E] font-mono uppercase font-bold">
-                      Completed & Tax Credited
-                    </span>
+
+                    <div className="text-right flex sm:flex-col items-center sm:items-end justify-between">
+                      <div className="font-serif text-2xl font-bold text-[#471319]">
+                        ₹{donAmount.toLocaleString('en-IN')}
+                      </div>
+                      <span className="text-[10px] text-[#8A8E3E] font-mono uppercase font-bold">
+                        Completed & Tax Credited
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
