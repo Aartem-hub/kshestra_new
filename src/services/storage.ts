@@ -76,7 +76,23 @@ export const StorageService = {
   getGuardians: (): TeamMember[] => {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.GUARDIANS);
-      return data ? JSON.parse(data) : INITIAL_GUARDIANS;
+      if (!data) return INITIAL_GUARDIANS;
+      const list: TeamMember[] = JSON.parse(data);
+      return list.map(item => {
+        const init = INITIAL_GUARDIANS.find(g => g.id === item.id);
+        if (!init) return item;
+        return {
+          ...init,
+          ...item,
+          bio: item.bio || init.bio,
+          title: item.title || init.title || item.role || init.role,
+          role: item.role || init.role,
+          portrait: item.portrait || init.portrait,
+          portraitImage: item.portraitImage || init.portraitImage || item.portrait || init.portrait,
+          achievements: (item.achievements && item.achievements.length > 0) ? item.achievements : init.achievements,
+          socialLinks: { ...init.socialLinks, ...item.socialLinks }
+        };
+      });
     } catch {
       return INITIAL_GUARDIANS;
     }

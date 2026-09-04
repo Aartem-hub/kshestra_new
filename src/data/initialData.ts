@@ -1,4 +1,5 @@
 import { EventItem, TeamMember, Artwork, GazetteArticle, DonationTier } from '../types';
+import { KSHESTRA_BLOG_ENTRIES } from './kshestraBlogs';
 
 export const KSHESTRA_MANIFESTO = {
   eyebrow: "FOR THE ARTIST BY THE ARTIST",
@@ -392,132 +393,196 @@ export const INITIAL_GUARDIANS: TeamMember[] = [
     id: "guard-01",
     name: "Tamohan",
     role: "Founder & Chief Visionary",
-    bio: "A cultural strategist and filmmaker committed to dismantling gatekept networks. Tamohan conceived Kshestra as a direct response to the systemic isolation faced by grassroots creators, establishing physical art sanctuaries with shared production resources in Kolkata.",
-    fullBio: "Tamohan has championed decentralized cultural spaces across South Asia. His focus centers on eliminating the middleman between independent makers and real production resources.",
+    title: "Founder & Chief Visionary",
     portrait: "/assets/Images/tamohan.png",
+    portraitImage: "/assets/Images/tamohan.png",
     medium: "Filmmaking, Cultural Strategy, Sanctum Architecture",
-    quote: "Art is not a luxury, an afterthought, or an idle hobby. It is the fundamental architecture of human conscience."
+    quote: "Art is not a luxury, an afterthought, or an idle hobby. It is the fundamental architecture of human conscience.",
+    bio: "A cultural strategist, independent filmmaker, and social entrepreneur committed to dismantling gatekept institutional networks. Tamohan conceived Kshestra as a direct sanctuary response to the systemic economic isolation faced by grassroots makers in South Asia. Under his guidance, the Trust established its physical production residency and open-access amphitheatre in South Kolkata, championing non-extractive patronage where creators retain 100% intellectual ownership of their work.",
+    fullBio: "Tamohan has championed decentralized cultural spaces across South Asia. His focus centers on eliminating the middleman between independent makers and real production resources.",
+    achievements: [
+      "Conceived and established Kshestra Cultural Trust and its South Kolkata Sanctum",
+      "Curated over 40 zero-fee independent residency programs and communal gatherings",
+      "Pioneered the 'Dignity in Craft' micro-stipend and emergency studio endowment model",
+      "Keynote speaker on decentralized creative infrastructure at Asian Cultural Forum"
+    ],
+    socialLinks: {
+      instagram: "https://instagram.com/tamohan",
+      x: "https://x.com/tamohan",
+      twitter: "https://twitter.com/tamohan",
+      linkedin: "https://linkedin.com/in/tamohan",
+      website: "https://kshestra.org",
+      archive: "https://kshestra.org/archive/tamohan"
+    }
   },
   {
     id: "guard-02",
     name: "Oindrila",
     role: "Chairperson & Cultural Curator",
-    bio: "An artist and creative director dedicated to preserving indigenous art forms while encouraging avant-garde experimentation. Oindrila steers the trust's cultural ethos, exhibition curations, and community residency initiatives.",
-    fullBio: "Oindrila coordinates our regional research circles, indigenous pigment labs, and seasonal open-air exhibitions.",
+    title: "Chairperson & Cultural Curator",
     portrait: "/assets/Images/oindrila.png",
+    portraitImage: "/assets/Images/oindrila.png",
     medium: "Curatorial Direction, Visual Arts & Living Archives",
-    quote: "We preserve indigenous memory not by locking it in glass cabinets, but by placing it in the hands of hungry young creators."
+    quote: "We preserve indigenous memory not by locking it in glass cabinets, but by placing it in the hands of hungry young creators.",
+    bio: "Visual artist, cultural anthropologist, and creative director dedicated to the conservation of indigenous heritage arts and avant-garde multidisciplinary experimentation. Oindrila steers Kshestra's curatorial direction, archival documentation, and annual festival gatherings, with specialized emphasis on Bengal's folk traditions, indigenous earth pigments, and oral poetry.",
+    fullBio: "Oindrila coordinates our regional research circles, indigenous pigment labs, and seasonal open-air exhibitions.",
+    achievements: [
+      "Lead Curator of the annual 'Monsoon Confluence' live arts symposium",
+      "Established the Kumartuli Heritage Clay & Natural Mineral Pigment Research Lab",
+      "Curated 25+ independent visual art showcases highlighting marginalized folk practitioners",
+      "Recipient of the National Bengal Heritage Cultural Stewardship Fellowship"
+    ],
+    socialLinks: {
+      instagram: "https://instagram.com/oindrila",
+      linkedin: "https://linkedin.com/in/oindrila",
+      website: "https://kshestra.org",
+      archive: "https://kshestra.org/archive/oindrila"
+    }
   },
   {
     id: "guard-03",
     name: "Nayanika",
     role: "Vice Chairperson & Community Director",
-    bio: "Writer and creative organizer specializing in cross-disciplinary initiatives. Nayanika leads Kshestra's regional outreach, member growth, and strategic community alliances across India.",
-    fullBio: "Nayanika designs our cross-discipline matchmaking circles and manages relationships with regional artist guilds.",
+    title: "Vice Chairperson & Community Director",
     portrait: "/assets/Images/nayanika.png",
+    portraitImage: "/assets/Images/nayanika.png",
     medium: "Literature, Community Organizing, Creative Outreach",
-    quote: "Great art is born in communion. When we tear down isolation, the creative impulse becomes unstoppable."
+    quote: "Great art is born in communion. When we tear down isolation, the creative impulse becomes unstoppable.",
+    bio: "Author, creative organizer, and community architect specializing in grassroots cultural alliances. Nayanika oversees Kshestra's regional outreach, member growth, and nationwide creator matchmaking initiatives. Her programs actively connect rural master craftspersons with urban digital technologists, breaking geographical silos to foster reciprocal artistic partnerships.",
+    fullBio: "Nayanika designs our cross-discipline matchmaking circles and manages relationships with regional artist guilds.",
+    achievements: [
+      "Architect of Kshestra's 2,000+ member cross-discipline Creator Matchmaking Network",
+      "Organized 18 cross-state literary symposiums and collaborative writer-in-residence retreats",
+      "Established regional grassroots partnerships across 6 eastern Indian states",
+      "Author of the critically acclaimed cultural anthology 'Voices from the Courtyard'"
+    ],
+    socialLinks: {
+      instagram: "https://instagram.com/nayanika",
+      x: "https://x.com/nayanika",
+      twitter: "https://twitter.com/nayanika",
+      linkedin: "https://linkedin.com/in/nayanika",
+      archive: "https://kshestra.org/archive/nayanika"
+    }
   },
   {
     id: "guard-04",
     name: "Shubhadeep",
     role: "General Secretary & Systems Architect",
-    bio: "Technology consultant and media archivist. Shubhadeep manages the trust’s digital governance, community infrastructure, and technical platforms that keep our open directories functional and secure.",
-    fullBio: "Shubhadeep builds open-source digital infrastructure for decentralized archiving and zero-fee artist discovery.",
+    title: "General Secretary & Systems Architect",
     portrait: "/assets/Images/shubhadeep.png",
+    portraitImage: "/assets/Images/shubhadeep.png",
     medium: "Digital Governance, Media Archiving, Open Platforms",
-    quote: "Technology is a tool of liberation. We build systems that automate the tedium so artists can stay in flow."
+    quote: "Technology is a tool of liberation. We build systems that automate the tedium so artists can stay in flow.",
+    bio: "Technology consultant, media archivist, and open-source advocate. Shubhadeep manages the digital governance, open registries, and real-time community platforms powering Kshestra. His work focuses on cryptographic transparency for charitable donations, decentralized media preservation, and zero-fee artist discovery engines that operate free from corporate algorithmic bias.",
+    fullBio: "Shubhadeep builds open-source digital infrastructure for decentralized archiving and zero-fee artist discovery.",
+    achievements: [
+      "Engineered Kshestra's open-access Digital Ledger and Real-Time Seat Allocation Engine",
+      "Built the decentralized Media Preservation Vault for rare folk audio and oral histories",
+      "Developed open-source tooling for trust transparency and 100% auditable public ledger",
+      "Invited speaker on Decentralized Cultural Archives at FOSS Asia"
+    ],
+    socialLinks: {
+      x: "https://x.com/shubhadeep",
+      twitter: "https://twitter.com/shubhadeep",
+      linkedin: "https://linkedin.com/in/shubhadeep",
+      website: "https://github.com/kshestra",
+      archive: "https://kshestra.org/archive/shubhadeep"
+    }
   },
   {
     id: "guard-05",
     name: "Vireshwar",
     role: "Treasurer & Financial Custodian",
-    bio: "Financial advisor and arts advocate. Vireshwar oversees the allocation of public donations, micro-grants, and institutional audits to guarantee that every rupee raised directly empowers resident artists.",
-    fullBio: "Vireshwar enforces strict 100% transparent fiscal oversight, micro-stipend disbursements, and trust compliance.",
+    title: "Treasurer & Financial Custodian",
     portrait: "/assets/Images/vira.png",
+    portraitImage: "/assets/Images/vira.png",
     medium: "Fiscal Stewardship, Non-Profit Governance, Micro-Grants",
-    quote: "Dignity in craft begins with economic stability. Every contribution is accounted for down to the last rupee."
+    quote: "Dignity in craft begins with economic stability. Every contribution is accounted for down to the last rupee.",
+    bio: "Financial strategist, compliance auditor, and advocate for sustainable arts economies. Vireshwar oversees the fiduciary health of the Trust, managing the allocation of public donations, micro-production grants, and institutional financial disclosures. He ensures Kshestra's rigorous zero-leakage policy, guaranteeing that patron contributions go directly to maker resources and sanctuary operations.",
+    fullBio: "Vireshwar enforces strict 100% transparent fiscal oversight, micro-stipend disbursements, and trust compliance.",
+    achievements: [
+      "Maintained 100% clean audit ratings for Kshestra Cultural Trust since inception",
+      "Disbursed over ₹18 Lakhs in direct micro-grants and emergency creative stipends",
+      "Structured the Trust's Permanent Creative Endowment and fiscal sustainability charter",
+      "Architect of Kshestra's publicly accessible real-time donation verification framework"
+    ],
+    socialLinks: {
+      linkedin: "https://linkedin.com/in/vireshwar",
+      x: "https://x.com/vireshwar",
+      twitter: "https://twitter.com/vireshwar",
+      website: "https://kshestra.org",
+      archive: "https://kshestra.org/archive/vireshwar"
+    }
   },
   {
     id: "guard-06",
     name: "Aryan",
     role: "Head of Artist Relations & Talent Liaison",
-    bio: "Actor and community coordinator. Aryan acts as the personal bridge between aspiring creators, workshop mentors, and incoming studio scouts, ensuring no new talent gets lost in the crowd.",
-    fullBio: "Aryan runs the weekly matchmaking circles and rapid-crew assembly tables at the Kolkata sanctum.",
+    title: "Head of Artist Relations & Talent Liaison",
     portrait: "/assets/Images/Aryan.png",
+    portraitImage: "/assets/Images/Aryan.png",
     medium: "Theatre Arts, Talent Coordination, Mentorship Liaison",
-    quote: "No passionate creator should ever have to stand outside the door wondering if their voice belongs."
+    quote: "No passionate creator should ever have to stand outside the door wondering if their voice belongs.",
+    bio: "Theatre practitioner, performer, and talent coordinator. Aryan serves as the personal liaison between incoming creators, masterclass mentors, and visiting independent studio directors. His open-door policy at the Kolkata sanctum ensures that aspiring practitioners receive warm guidance, mentorship access, and immediate integration into active community productions.",
+    fullBio: "Aryan runs the weekly matchmaking circles and rapid-crew assembly tables at the Kolkata sanctum.",
+    achievements: [
+      "Facilitated casting and production crew assembly for 30+ independent productions",
+      "Curator of the weekly 'Circle of Practice' unscripted theatre and performance jams",
+      "Mentored 150+ emergent dramatists and physical performers entering the Kolkata arts scene",
+      "Directed critically acclaimed regional stage performance 'Rong o Rekha' (Color & Line)"
+    ],
+    socialLinks: {
+      instagram: "https://instagram.com/aryan",
+      x: "https://x.com/aryan",
+      twitter: "https://twitter.com/aryan",
+      linkedin: "https://linkedin.com/in/aryan",
+      archive: "https://kshestra.org/archive/aryan"
+    }
   },
   {
     id: "guard-07",
     name: "Sayan",
     role: "Design Lead & Head of Visual Identity",
-    bio: "Multidisciplinary brand designer and founder of design agency Saypollo. Sayan architects Kshestra’s visual systems, spatial design touchpoints, and creative identity, ensuring every medium honors the collective's raw, uncompromising aesthetic.",
-    fullBio: "Sayan oversees all visual languages, typography pairings, physical sanctum spatial signage, and printed dispatches.",
+    title: "Design Lead & Head of Visual Identity",
     portrait: "/assets/Images/Sayan.png",
+    portraitImage: "/assets/Images/Sayan.png",
     medium: "Brand Systems, Typography, Spatial Design & Saypollo",
-    quote: "Aesthetics are not superficial decoration; they are the physical manifestation of our collective soul."
+    quote: "Aesthetics are not superficial decoration; they are the physical manifestation of our collective soul.",
+    bio: "Multidisciplinary visual designer, typographer, and founder of design studio Saypollo. Sayan architects Kshestra's visual language, spatial signage, print gazettes, and digital touchpoints. His aesthetic philosophy marries traditional Indian printmaking, terracotta textures, and Bengali script aesthetics with contemporary editorial layout and responsive digital craft.",
+    fullBio: "Sayan oversees all visual languages, typography pairings, physical sanctum spatial signage, and printed dispatches.",
+    achievements: [
+      "Creator of Kshestra's distinctive visual identity system, typography pairings, and seals",
+      "Founder & Principal Designer at Saypollo Design Studio",
+      "Designer of the printed Autumn Gazette and bespoke Sanctum Architectural Signage",
+      "Featured in International Design Biennale for indigenous vernacular typography"
+    ],
+    socialLinks: {
+      instagram: "https://instagram.com/sayan",
+      x: "https://x.com/sayan",
+      twitter: "https://twitter.com/sayan",
+      linkedin: "https://linkedin.com/in/sayan",
+      website: "https://saypollo.com",
+      archive: "https://kshestra.org/archive/sayan"
+    }
   }
 ];
 
-export const INITIAL_DISPATCHES: GazetteArticle[] = [
-  {
-    id: "dsp-01",
-    title: "Why We Must Dismantle the Myth of the \"Starving Genius\"",
-    author: "The Kshestra Editorial Desk",
-    authorRole: "Editorial Collective",
-    date: "Autumn Dispatches · 2026",
-    readTime: "4 Min Read",
-    issueNumber: "Dispatch #01",
-    category: "Cultural Commentary",
-    excerpt: "Romanticizing an artist's struggle is a convenient way for exploitative systems to avoid paying fair compensation. Here is why dignity in craft must begin with economic stability and collective ownership.",
-    content: [
-      "For centuries, romantic mythology has told us that suffering produces genius—that an artist must be hungry, isolated, and desperate to create profound work. This is not romantic; it is an extractive lie.",
-      "Romanticizing struggle allows gatekeepers, corporate middlemen, and exploitative platforms to demand free labor under the guise of 'exposure'. When an artist is forced to scramble for survival, their mental space is stolen from their craft.",
-      "At Kshestra, we believe creation is survival. Sustaining the maker through free studio tools, emergency micro-grants, and fair compensation is not charity—it is basic infrastructure for human culture.",
-      "When we remove economic desperation, artists do not become lazy; they become fearless."
-    ],
-    coverImage: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1000&q=80",
-    tags: ["Cultural Commentary", "Economic Dignity", "Collective Ownership"]
-  },
-  {
-    id: "dsp-02",
-    title: "Notes from the Editing Suite: The Rhythm of Regional Cinema",
-    author: "Resident Editor",
-    authorRole: "Kshestra Cinema Lab",
-    date: "Field Journal · 2026",
-    readTime: "6 Min Read",
-    issueNumber: "Dispatch #02",
-    category: "Craft & Production Lab",
-    excerpt: "Pacing isn't just a technical choice; it is a cultural pulse. How independent editors are reimagining traditional narrative structures for modern international film circuits.",
-    content: [
-      "Cinema from South Asia does not breathe at the hyper-compressed rhythm of Western three-act blockbusters. Our sense of time is rooted in seasonal monsoons, river tides, and slow evening twilights.",
-      "In the editing suite at Kshestra Tolly Sanctum, we work with young directors to explore how lingering on an empty courtyard or holding a cut on an actor's unsaid word carries profound emotional gravity.",
-      "By mastering modern non-linear editing software and color grading pipelines while honoring regional cadence, independent creators are crafting cinema that is simultaneously authentic and world-class."
-    ],
-    coverImage: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1000&q=80",
-    tags: ["Craft & Production Lab", "Cinema Pacing", "Regional Narratives"]
-  },
-  {
-    id: "dsp-03",
-    title: "Can an Algorithm Understand Soul? A Painter’s Honest Take on AI",
-    author: "Fine Arts Resident",
-    authorRole: "Kshestra Studio Residency",
-    date: "Studio Dispatch · 2026",
-    readTime: "5 Min Read",
-    issueNumber: "Dispatch #03",
-    category: "Modern Toolsets",
-    excerpt: "Moving past fear and sensationalism: how using generative software as a digital sketchpad helped me paint faster without diluting my intent or brushstroke integrity.",
-    content: [
-      "When generative image models first surged, the immediate reaction was terror. Would brushes become obsolete? Would our years of anatomical study and pigment chemistry be reduced to a prompt?",
-      "After three months of hands-on experimentation in Kshestra's creative technology lab, my perspective changed completely. The algorithm does not have intent, heartache, or memories of wet clay.",
-      "What it does have is rapid ideation speed. Using generative sketches for lighting studies and color palette explorations saved me twenty hours of tedious prep work, allowing me to spend all my physical energy in front of the actual canvas.",
-      "Technology is our tool of liberation, never replacement. We master new mediums to amplify human expression, never to sell our soul."
-    ],
-    coverImage: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1000&q=80",
-    tags: ["Modern Toolsets", "Painter's Perspective", "Creative Technology"]
-  }
-];
+export const INITIAL_DISPATCHES: GazetteArticle[] = KSHESTRA_BLOG_ENTRIES.map((blog, idx) => ({
+  id: blog.id,
+  title: blog.title,
+  author: blog.author,
+  authorRole: blog.author.includes('Oindrila') ? 'Chairperson, Kshestra' : 'Editorial Collective',
+  date: blog.publishDate ? new Date(blog.publishDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Autumn 2026',
+  readTime: blog.readTime || '6–8 Min Read',
+  issueNumber: `Dispatch #${String(idx + 1).padStart(2, '0')}`,
+  category: (blog.tags && blog.tags.length > 0 ? blog.tags[0] : 'Cultural Commentary') as any,
+  excerpt: blog.excerpt,
+  content: blog.body ? blog.body.split('\n\n').filter(Boolean) : [blog.excerpt],
+  body: blog.body,
+  markdown: blog.body,
+  coverImage: blog.coverImage,
+  tags: blog.tags
+}));
 
 export const INITIAL_DONATION_TIERS: DonationTier[] = [
   {

@@ -42,18 +42,25 @@ export interface TeamMember {
   name: string;
   bengaliName?: string;
   role: string;
+  title?: string;
   bengaliRole?: string;
   bio: string;
   fullBio?: string;
   portrait?: string;
+  portraitImage?: string;
   medium?: string;
   quote?: string;
+  achievements?: string[];
   exhibitions?: string[];
   awards?: string[];
   socialLinks?: {
     instagram?: string;
+    twitter?: string;
+    x?: string;
+    linkedin?: string;
     website?: string;
     archive?: string;
+    [key: string]: string | undefined;
   };
 }
 
@@ -94,6 +101,8 @@ export interface GazetteArticle {
   category: 'Cultural Commentary' | 'Craft & Production Lab' | 'Modern Toolsets' | 'Critical Theory' | 'Archival Study' | 'Artist Dialogue' | 'Bengal Modernism' | string;
   excerpt: string;
   content: string[];
+  body?: string;
+  markdown?: string;
   coverImage?: string;
   tags?: string[];
 }
@@ -184,4 +193,49 @@ export interface UserReceipt {
   eventTitle: string;
   amount: number;
   date: string;
+}
+
+export interface GrantRecord {
+  id: string;
+  applicantName: string;
+  email: string;
+  submissionDate: string;
+  proposedProject: string;
+  discipline: string;
+  requestedAmount: number;
+  status: 'Pending Review' | 'Approved' | 'Disbursed' | 'Declined';
+  curatorNotes?: string;
+  createdAt?: string;
+}
+
+export interface BlogRecord {
+  id: string;
+  title: string;
+  slug?: string;
+  author: string;
+  publishDate: string;
+  excerpt: string;
+  body: string;
+  content?: string;
+  coverImage?: string;
+  tags?: string[];
+  status: 'Draft' | 'Published';
+  readTime?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ArchiveRecord {
+  id: string;
+  title: string;
+  conclaveYear: string;
+  conclaveDate?: string;
+  chapter: string;
+  retrospectiveEssay: string;
+  primaryImage: string;
+  galleryImages?: string[];
+  curators?: string[];
+  featuredArtists?: string[];
+  mediaEmbedUrl?: string;
+  createdAt?: string;
 }

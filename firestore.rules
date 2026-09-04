@@ -14,7 +14,8 @@ service cloud.firestore {
     function isAdmin() {
       return isSignedIn() && (
         request.auth.token.email == 'chairperson@kshestra.com' ||
-        request.auth.token.email == 'artorgphase1@gmail.com'
+        request.auth.token.email == 'artorgphase1@gmail.com' ||
+        request.auth.token.email == 'beingenious01@gmail.com'
       );
     }
 
@@ -30,18 +31,34 @@ service cloud.firestore {
 
     // Resident Creator profiles
     match /users/{userId} {
-      allow read, write: if isSignedIn() && request.auth.uid == userId;
-      allow read: if isAdmin();
+      allow read: if isSignedIn();
+      allow write: if (isSignedIn() && request.auth.uid == userId) || isAdmin();
 
       match /passes/{passId} {
-        allow read, write: if isSignedIn() && request.auth.uid == userId;
-        allow read: if isAdmin();
+        allow read, write: if (isSignedIn() && request.auth.uid == userId) || isAdmin();
       }
 
       match /receipts/{receiptId} {
-        allow read, write: if isSignedIn() && request.auth.uid == userId;
-        allow read: if isAdmin();
+        allow read, write: if (isSignedIn() && request.auth.uid == userId) || isAdmin();
       }
+    }
+
+    // Community & Artist Grants Ledger
+    match /grants/{grantId} {
+      allow read, write: if isAdmin();
+      allow create: if isSignedIn();
+    }
+
+    // Chronicles & Journal (Blogs)
+    match /blogs/{blogId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // The Living Archive (Past Gatherings)
+    match /archives/{archiveId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
   }
 }

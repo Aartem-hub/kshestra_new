@@ -71,11 +71,71 @@
         "email": { "type": "string", "description": "Email" },
         "location": { "type": "string", "description": "Resident location" },
         "residentSince": { "type": "string", "description": "Membership starting year" },
+        "role": { "type": "string", "description": "Membership tier or role" },
         "passes": { "type": "array", "description": "Active and past event passes" },
         "receipts": { "type": "array", "description": "Receipts and contribution history" },
         "createdAt": { "type": "string", "description": "Profile creation timestamp" }
       },
       "required": ["email"]
+    },
+    "Grant": {
+      "title": "Grant",
+      "description": "Community and artist production grant application record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Grant unique ID" },
+        "applicantName": { "type": "string", "description": "Applicant full name" },
+        "email": { "type": "string", "description": "Applicant email" },
+        "submissionDate": { "type": "string", "description": "Application submission date" },
+        "proposedProject": { "type": "string", "description": "Proposed project title and abstract" },
+        "discipline": { "type": "string", "description": "Artistic discipline" },
+        "requestedAmount": { "type": "number", "description": "Requested funding amount in INR" },
+        "status": { "type": "string", "enum": ["Pending Review", "Approved", "Disbursed", "Declined"], "description": "Status of the grant review" },
+        "curatorNotes": { "type": "string", "description": "Internal trust curation or audit remarks" },
+        "createdAt": { "type": "string", "description": "Timestamp created" }
+      },
+      "required": ["applicantName", "email", "proposedProject", "requestedAmount", "status"]
+    },
+    "Blog": {
+      "title": "Blog",
+      "description": "Sanctuary chronicle, journal dispatch, or editorial entry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Chronicle unique ID" },
+        "title": { "type": "string", "description": "Title of dispatch" },
+        "slug": { "type": "string", "description": "URL slug" },
+        "author": { "type": "string", "description": "Author name or Trustee moniker" },
+        "publishDate": { "type": "string", "description": "Publish date display string" },
+        "excerpt": { "type": "string", "description": "Summary excerpt for card previews" },
+        "body": { "type": "string", "description": "Full Markdown/HTML narrative content" },
+        "coverImage": { "type": "string", "description": "Cover graphic URL" },
+        "tags": { "type": "array", "description": "Category tags" },
+        "status": { "type": "string", "enum": ["Draft", "Published"], "description": "Publication status" },
+        "readTime": { "type": "string", "description": "Estimated reading time" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "description": "Last update timestamp" }
+      },
+      "required": ["title", "author", "publishDate", "body", "status"]
+    },
+    "Archive": {
+      "title": "Archive",
+      "description": "Living Archive retrospective record for past gatherings and residencies",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Archive record ID" },
+        "title": { "type": "string", "description": "Conclave or Gathering title" },
+        "conclaveYear": { "type": "string", "description": "Year of conclave (e.g. 2024)" },
+        "conclaveDate": { "type": "string", "description": "Date or range" },
+        "chapter": { "type": "string", "description": "Chapter/City (e.g. Kolkata Sanctum)" },
+        "retrospectiveEssay": { "type": "string", "description": "Full retrospective narrative or summary" },
+        "primaryImage": { "type": "string", "description": "Primary archival keyframe URL" },
+        "galleryImages": { "type": "array", "description": "Additional visual memory URLs" },
+        "curators": { "type": "array", "description": "Curators involved" },
+        "featuredArtists": { "type": "array", "description": "Credited artists and makers" },
+        "mediaEmbedUrl": { "type": "string", "description": "YouTube, Vimeo, or SoundCloud link" },
+        "createdAt": { "type": "string", "description": "Timestamp created" }
+      },
+      "required": ["title", "conclaveYear", "chapter", "retrospectiveEssay", "primaryImage"]
     }
   },
   "firestore": {
@@ -94,6 +154,18 @@
     "/users/{userId}/receipts/{receiptId}": {
       "schema": "Receipt",
       "description": "Subcollection of booking transactions for user"
+    },
+    "/grants/{grantId}": {
+      "schema": "Grant",
+      "description": "Community and artist grant submissions and disbursements"
+    },
+    "/blogs/{blogId}": {
+      "schema": "Blog",
+      "description": "Chronicles, essays, and editorial dispatches from the sanctuary"
+    },
+    "/archives/{archiveId}": {
+      "schema": "Archive",
+      "description": "Living Archive records of past gatherings, exhibits, and confluences"
     }
   }
 }

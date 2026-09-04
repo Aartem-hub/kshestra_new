@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { TeamMember } from '../types';
 import { StorageService } from '../services/storage';
-import { Shield, Award } from 'lucide-react';
+import { Shield, Award, ArrowUpRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import { KshestraLogo } from './KshestraLogo';
+import { GuardianDetailModal } from './GuardianDetailModal';
+import { audioSynth } from '../services/audioSynthesizer';
 
 const getMemberImageCandidates = (member: TeamMember): string[] => {
   const nameLower = member.name.toLowerCase();
@@ -56,6 +58,11 @@ export const TeamSection: React.FC = () => {
   const [guardians, setGuardians] = useState<TeamMember[]>([]);
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
   const [coloredMemberIds, setColoredMemberIds] = useState<Record<string, boolean>>({});
+  const [selectedGuardian, setSelectedGuardian] = useState<{
+    member: TeamMember;
+    index: number;
+    portraitSrc: string;
+  } | null>(null);
 
   useEffect(() => {
     setGuardians(StorageService.getGuardians());
@@ -66,6 +73,24 @@ export const TeamSection: React.FC = () => {
       ...prev,
       [memberId]: !prev[memberId]
     }));
+  };
+
+  const openGuardianModal = (member: TeamMember, index: number, portraitSrc: string) => {
+    audioSynth.playChime();
+    setSelectedGuardian({ member, index, portraitSrc });
+  };
+
+  const handleImageInteraction = (e: React.MouseEvent, member: TeamMember, index: number, portraitSrc: string) => {
+    // On touchscreens / mobile screens, tapping the image directly triggers the color/active visual state
+    // and stops propagation to prevent accidental modal popups while scrolling or previewing.
+    const isTouchOrMobile = window.matchMedia('(max-width: 768px)').matches || ('ontouchstart' in window);
+    if (isTouchOrMobile) {
+      e.stopPropagation();
+      toggleMemberColor(member.id);
+    } else {
+      // Desktop: clicking image opens modal directly
+      openGuardianModal(member, index, portraitSrc);
+    }
   };
 
   const handleImageError = (memberId: string, e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -113,7 +138,7 @@ export const TeamSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Compact, Smaller Profile Cards Grid (Image, Name, Position & Quote) */}
+        {/* Compact Profile Cards Grid (Image, Name, Position & Quote) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
           {guardians.map((member, idx) => {
             const candidates = getMemberImageCandidates(member);
@@ -128,14 +153,15 @@ export const TeamSection: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: idx * 0.04 }}
-                className="bg-[#FFFFFF] border border-[#3A2B27]/15 rounded-xs overflow-hidden flex flex-col justify-between hover:border-[#8A8E3E] hover:shadow-md transition-all group"
+                onClick={() => openGuardianModal(member, idx, initialSrc)}
+                className="bg-[#FFFFFF] border border-[#3A2B27]/15 rounded-xs overflow-hidden flex flex-col justify-between hover:border-[#8A8E3E] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-pointer"
               >
                 <div>
-                  {/* 1:1 Square Portrait Photo OR Trustee Archival Plate - Click to color on mobile */}
+                  {/* 1:1 Square Portrait Photo OR Trustee Archival Plate */}
                   <div 
-                    onClick={() => toggleMemberColor(member.id)}
-                    className="cursor-pointer select-none relative aspect-square w-full bg-[#3A2B27] overflow-hidden flex items-center justify-center"
-                    title="Click/Tap to view in color"
+                    onClick={(e) => handleImageInteraction(e, member, idx, initialSrc)}
+                    className="select-none relative aspect-square w-full bg-[#3A2B27] overflow-hidden flex items-center justify-center cursor-pointer"
+                    title="Click or Tap to toggle color / view profile"
                   >
                     
                     {!isFailed ? (
@@ -177,25 +203,46 @@ export const TeamSection: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Compact Info Content: Name & Position */}
-                  <div className="p-4 pb-2 space-y-1">
-                    <div className="text-[10px] font-mono uppercase tracking-wider text-[#8A8E3E] font-bold line-clamp-1">
-                      {member.role}
+                  {/* Lower Content Area: Name, Role, Quote & Explicit Chronicle Trigger */}
+                  <div 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openGuardianModal(member, idx, initialSrc);
+                    }}
+                    className="p-4 pb-2 space-y-2 cursor-pointer select-none"
+                  >
+                    <div className="space-y-0.5">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-[#8A8E3E] font-bold line-clamp-1">
+                        {member.role}
+                      </div>
+                      <h3 className="font-gambetta text-lg sm:text-xl font-bold text-[#3A2B27] group-hover:text-[#471319] transition-colors leading-snug">
+                        {member.name}
+                      </h3>
                     </div>
-                    <h3 className="font-gambetta text-lg sm:text-xl font-bold text-[#3A2B27] group-hover:text-[#471319] transition-colors leading-snug">
-                      {member.name}
-                    </h3>
+
+                    {/* Quote */}
+                    {member.quote && (
+                      <div className="p-2.5 bg-[#FFF5E9] border-l-2 border-l-[#8A8E3E] border-t border-t-[#3A2B27]/10 text-[11px] font-serif italic text-[#3A2B27]/85 leading-snug rounded-xs">
+                        "{member.quote}"
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Quote Footer */}
-                {member.quote && (
-                  <div className="p-4 pt-1">
-                    <div className="p-2.5 bg-[#FFF5E9] border-l-2 border-l-[#8A8E3E] border-t border-t-[#3A2B27]/10 text-[11px] font-serif italic text-[#3A2B27]/85 leading-snug rounded-xs">
-                      "{member.quote}"
-                    </div>
-                  </div>
-                )}
+                {/* Explicit Tasteful Trigger for Mobile and Scannable Desktop Access */}
+                <div className="p-4 pt-1 pb-4">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openGuardianModal(member, idx, initialSrc);
+                    }}
+                    className="w-full flex items-center justify-between px-3 py-1.5 bg-[#FFF5E9] hover:bg-[#471319] text-[#471319] hover:text-[#FFF5E9] border border-[#8A8E3E]/30 rounded-xs font-mono text-[10px] font-bold uppercase tracking-wider transition-all duration-200 group/btn shadow-2xs"
+                  >
+                    <span>View Chronicle / Bio</span>
+                    <span className="text-[#8A8E3E] group-hover/btn:text-[#FFF5E9] group-hover/btn:translate-x-1 transition-transform">→</span>
+                  </button>
+                </div>
               </motion.div>
             );
           })}
@@ -211,6 +258,16 @@ export const TeamSection: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Guardian Detail Modal */}
+      {selectedGuardian && (
+        <GuardianDetailModal
+          guardian={selectedGuardian.member}
+          index={selectedGuardian.index}
+          portraitSrc={selectedGuardian.portraitSrc}
+          onClose={() => setSelectedGuardian(null)}
+        />
+      )}
     </section>
   );
 };

@@ -213,6 +213,67 @@ export async function deleteAdminEvent(eventId: string): Promise<void> {
 }
 
 /**
+ * Admin Update: Modifies an existing gathering directly in Firestore
+ */
+export async function updateAdminEvent(
+  eventId: string,
+  updatedData: {
+    title: string;
+    date: string;
+    time?: string;
+    venue: string;
+    city?: string;
+    description: string;
+    isPaid: boolean;
+    price: number;
+    totalSeats: number;
+    availableSeats: number;
+    category?: string;
+    coverImage?: string;
+    curatorNotes?: string;
+    featuredArtists?: string[];
+    tags?: string[];
+  }
+): Promise<EventItem> {
+  const currentEmail = auth.currentUser?.email;
+  if (!currentEmail || !isEmailAdmin(currentEmail)) {
+    throw new Error('Access Clearance Denied: Only authorized trustees may modify gatherings.');
+  }
+
+  const docRef = doc(db, EVENTS_COLLECTION, eventId);
+  const snap = await getDoc(docRef);
+  const existingData = snap.exists() ? snap.data() : {};
+
+  const payload: any = {
+    ...existingData,
+    title: updatedData.title,
+    date: updatedData.date,
+    time: updatedData.time || '6:00 PM IST',
+    venue: updatedData.venue,
+    city: updatedData.city || 'Kolkata, WB',
+    description: updatedData.description,
+    isPaid: updatedData.isPaid,
+    price: updatedData.isPaid ? Number(updatedData.price || 0) : 0,
+    totalSeats: Number(updatedData.totalSeats || 50),
+    capacity: Number(updatedData.totalSeats || 50),
+    availableSeats: Number(updatedData.availableSeats ?? updatedData.totalSeats),
+    availableTickets: Number(updatedData.availableSeats ?? updatedData.totalSeats),
+    category: updatedData.category || existingData.category || 'Live Performance & Acoustic Poetry',
+    coverImage: updatedData.coverImage || existingData.coverImage || '',
+    curatorNotes: updatedData.curatorNotes || existingData.curatorNotes || '',
+    featuredArtists: updatedData.featuredArtists || existingData.featuredArtists || ['Resident Artists'],
+    tags: updatedData.tags || existingData.tags || ['Gathering'],
+    updatedAt: new Date().toISOString()
+  };
+
+  await setDoc(docRef, payload, { merge: true });
+
+  const mapped = mapFirestoreToEventItem(eventId, payload);
+  StorageService.updateEvent(mapped);
+  return mapped;
+}
+
+/**
  * Atomically book a gathering pass with live inventory decrement in Firestore
  */
 export async function bookEventPass(
