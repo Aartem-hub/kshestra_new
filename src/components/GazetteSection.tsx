@@ -86,6 +86,34 @@ export const GazetteSection: React.FC = () => {
     setVisibleCount(3);
   }, [activeCategory, searchQuery]);
 
+  // Lock body scroll and pause Lenis smooth scrolling while the essay reader modal is open
+  useEffect(() => {
+    if (selectedArticle) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      const lenis = (window as any).lenis;
+      if (lenis && typeof lenis.stop === 'function') {
+        lenis.stop();
+      }
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setSelectedArticle(null);
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        if (lenis && typeof lenis.start === 'function') {
+          lenis.start();
+        }
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [selectedArticle]);
+
   // Paginated articles to display
   const displayedDispatches = useMemo(() => {
     return filteredDispatches.slice(0, visibleCount);
@@ -93,7 +121,7 @@ export const GazetteSection: React.FC = () => {
 
   return (
     <section id="gazette-section" className="py-20 md:py-28 px-4 sm:px-8 border-b border-[#3A2B27]/15 bg-[#FFF5E9]">
-      <div className="max-w-5xl mx-auto space-y-10">
+      <div className="max-w-7xl mx-auto space-y-10">
         
         {/* Section Header: Journal Masthead */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-2 border-[#3A2B27] pb-6">
@@ -177,7 +205,7 @@ export const GazetteSection: React.FC = () => {
                 className="py-8 sm:py-10 px-2 sm:px-4 cursor-pointer hover:bg-[#F6EADB]/60 transition-all duration-300 group flex flex-col md:flex-row items-stretch md:items-start gap-6 lg:gap-8 rounded-xs"
               >
                 {/* Left Side: Big, Prominent Image */}
-                <div className="w-full md:w-72 lg:w-84 h-52 sm:h-64 md:h-52 lg:h-56 shrink-0 rounded-xs overflow-hidden border border-[#3A2B27]/15 bg-[#F6EADB] relative shadow-xs">
+                <div className="w-full md:w-80 lg:w-96 h-52 sm:h-64 md:h-56 lg:h-60 shrink-0 rounded-xs overflow-hidden border border-[#3A2B27]/15 bg-[#F6EADB] relative shadow-xs">
                   {article.coverImage ? (
                     <img 
                       src={article.coverImage} 
@@ -271,27 +299,45 @@ export const GazetteSection: React.FC = () => {
       {/* Full Essay Modal Reader */}
       <AnimatePresence>
         {selectedArticle && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#3A2B27]/80 backdrop-blur-sm">
+          <div 
+            id="gazette-reader-modal-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="gazette-modal-title"
+            onClick={() => {
+              audioSynth.playChime();
+              setSelectedArticle(null);
+            }}
+            data-lenis-prevent
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-10 overflow-y-auto bg-[#3A2B27]/80 backdrop-blur-sm"
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-[#FFF5E9] rounded-xs max-w-3xl w-full max-h-[90vh] overflow-y-auto border-2 border-[#3A2B27] shadow-2xl p-6 sm:p-10 relative text-[#3A2B27]"
+              onClick={(e) => e.stopPropagation()}
+              data-lenis-prevent
+              initial={{ opacity: 0, scale: 0.96, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 15 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="bg-[#FFF5E9] rounded-xs max-w-3xl w-full max-h-[88vh] overflow-y-auto overscroll-contain border-2 border-[#3A2B27] shadow-2xl p-6 sm:p-10 relative text-[#3A2B27] my-auto"
             >
               <button
-                onClick={() => setSelectedArticle(null)}
+                onClick={() => {
+                  audioSynth.playChime();
+                  setSelectedArticle(null);
+                }}
                 data-cursor="pointer"
-                className="absolute top-4 right-4 p-2 text-[#3A2B27] hover:bg-[#471319] hover:text-[#FFF5E9] rounded-xs transition-colors border border-[#3A2B27]/20"
+                aria-label="Close Essay"
+                className="absolute top-4 right-4 p-2 text-[#3A2B27] hover:bg-[#471319] hover:text-[#FFF5E9] rounded-xs transition-colors border border-[#3A2B27]/20 z-10"
               >
                 <X className="w-5 h-5" />
               </button>
 
               <div className="space-y-6">
-                <div className="space-y-3 border-b-2 border-[#3A2B27] pb-4">
+                <div className="space-y-3 border-b-2 border-[#3A2B27] pb-4 pr-10">
                   <div className="text-xs font-mono font-bold uppercase tracking-widest text-[#471319]">
                     {selectedArticle.category} · {selectedArticle.issueNumber || 'Dispatch'}
                   </div>
-                  <h2 className="font-gambetta text-3xl sm:text-4xl font-bold text-[#3A2B27] leading-tight">
+                  <h2 id="gazette-modal-title" className="font-gambetta text-3xl sm:text-4xl font-bold text-[#3A2B27] leading-tight">
                     {selectedArticle.title}
                   </h2>
                   <div className="text-xs text-[#725C54] font-mono">
@@ -337,7 +383,10 @@ export const GazetteSection: React.FC = () => {
                 <div className="pt-6 border-t border-[#3A2B27]/15 flex items-center justify-between text-xs text-[#725C54] font-mono">
                   <span>Kshestra Sovereign Dispatches · 2026</span>
                   <button
-                    onClick={() => setSelectedArticle(null)}
+                    onClick={() => {
+                      audioSynth.playChime();
+                      setSelectedArticle(null);
+                    }}
                     data-cursor="pointer"
                     className="px-4 py-2 text-xs font-bold uppercase rounded-xs bg-[#3A2B27] text-[#FFF5E9] hover:bg-[#471319] transition-colors"
                   >
