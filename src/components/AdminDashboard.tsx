@@ -86,6 +86,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [newEventTime, setNewEventTime] = useState('6:00 PM IST');
   const [newEventVenue, setNewEventVenue] = useState('Kshestra Courtyard, South Kolkata');
   const [newEventPrice, setNewEventPrice] = useState('199');
+  const [newEventCapacity, setNewEventCapacity] = useState('60');
+  const [newEventIsPaid, setNewEventIsPaid] = useState(true);
   const [newEventCategory, setNewEventCategory] = useState<string>('Live Performance & Acoustic Poetry');
   const [newEventDescription, setNewEventDescription] = useState('');
   const [newEventCover, setNewEventCover] = useState('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1000&q=80');
@@ -108,6 +110,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (isAuthorizedAdmin) {
       fetchRegisteredArtists();
       loadAllData();
+
+      // Subscribe to real-time events
+      const unsubEvents = subscribeToEvents((liveEvents) => {
+        setEvents(liveEvents);
+      });
+      return () => unsubEvents();
     } else {
       setRegisteredArtists([]);
     }
@@ -223,9 +231,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const totalDonationAmount = donations.reduce((sum, d) => sum + (d.amount || 0), 0);
   const totalTicketsIssued = tickets.reduce((sum, t) => sum + (t.ticketCount || 0), 0);
 
-  const handleCreateEvent = (e: React.FormEvent) => {
+  const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     audioSynth.playChime();
+    const cap = parseInt(newEventCapacity, 10) || 60;
+    const priceVal = newEventIsPaid ? (parseInt(newEventPrice, 10) || 0) : 0;
+
     const created: EventItem = {
       id: `evt-ksh-${Date.now()}`,
       title: newEventTitle || 'New Gathering',
@@ -234,25 +245,58 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       time: newEventTime,
       venue: newEventVenue,
       city: 'Kolkata',
-      price: parseInt(newEventPrice, 10) || 0,
+      price: priceVal,
       category: newEventCategory as any,
-      capacity: 80,
-      availableTickets: 80,
+      capacity: cap,
+      availableTickets: cap,
+      totalSeats: cap,
+      availableSeats: cap,
+      isPaid: priceVal > 0,
+      tier: priceVal > 0 ? 'paid' : 'free',
       description: newEventDescription || 'Independent artist gathering hosted by Kshestra Cultural Trust.',
       curatorNotes: 'Sanctum entry and open circle dialogue.',
       featuredArtists: ['Kshestra Resident Artists'],
       coverImage: newEventCover,
       tags: ['Independent Art', 'Kshestra Sanctuary']
     };
-    StorageService.addEvent(created);
+
+    try {
+      if (auth.currentUser && isAuthorizedAdmin) {
+        await createAdminEvent({
+          title: created.title,
+          date: created.date,
+          time: created.time,
+          venue: created.venue,
+          description: created.description,
+          isPaid: priceVal > 0,
+          price: priceVal,
+          totalSeats: cap,
+          category: created.category,
+          coverImage: created.coverImage
+        });
+      } else {
+        StorageService.addEvent(created);
+      }
+    } catch (err) {
+      console.warn('Fallback to local storage event creation:', err);
+      StorageService.addEvent(created);
+    }
+
     loadAllData();
     setShowAddEventModal(false);
     setNewEventTitle('');
   };
 
-  const handleDeleteEvent = (id: string) => {
+  const handleDeleteEvent = async (id: string) => {
     if (confirm('Are you sure you want to remove this gathering from the schedule?')) {
       audioSynth.playChime();
+      try {
+        if (auth.currentUser && isAuthorizedAdmin) {
+          await deleteAdminEvent(id);
+        }
+      } catch (err) {
+        console.warn('Firestore event delete notice:', err);
+      }
       StorageService.deleteEvent(id);
       loadAllData();
     }
@@ -919,14 +963,67 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="font-semibold block text-[#3A2B27]">Ticket Tier (₹)</label>
+                  <label className="font-semibold block text-[#3A2B27]">Sanctuary Capacity (Seats)</label>
                   <input
                     type="number"
-                    value={newEventPrice}
-                    onChange={(e) => setNewEventPrice(e.target.value)}
+                    min="1"
+                    required
+                    value={newEventCapacity}
+                    onChange={(e) => setNewEventCapacity(e.target.value)}
+                    placeholder="e.g. 50"
                     className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm"
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 items-end">
+                <div className="space-y-1">
+                  <label className="font-semibold block text-[#3A2B27]">Access Tier</label>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setNewEventIsPaid(true)}
+                      className={`flex-1 py-2 px-2 text-[11px] font-mono font-bold uppercase rounded-xs border transition-colors ${
+                        newEventIsPaid
+                          ? 'bg-[#471319] text-[#FFF5E9] border-[#471319]'
+                          : 'bg-[#FFFFFF] text-[#3A2B27] border-[#3A2B27]/20'
+                      }`}
+                    >
+                      Paid Pass
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewEventIsPaid(false);
+                        setNewEventPrice('0');
+                      }}
+                      className={`flex-1 py-2 px-2 text-[11px] font-mono font-bold uppercase rounded-xs border transition-colors ${
+                        !newEventIsPaid
+                          ? 'bg-[#471319] text-[#FFF5E9] border-[#471319]'
+                          : 'bg-[#FFFFFF] text-[#3A2B27] border-[#3A2B27]/20'
+                      }`}
+                    >
+                      Free RSVP
+                    </button>
+                  </div>
+                </div>
+
+                {newEventIsPaid ? (
+                  <div className="space-y-1">
+                    <label className="font-semibold block text-[#3A2B27]">Pass Price (₹)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={newEventPrice}
+                      onChange={(e) => setNewEventPrice(e.target.value)}
+                      className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm"
+                    />
+                  </div>
+                ) : (
+                  <div className="text-[11px] font-mono text-[#8A8E3E] pb-2">
+                    ✓ Trust sponsored admission
+                  </div>
+                )}
               </div>
 
               <div className="space-y-1">

@@ -3,6 +3,7 @@ import { UserMember, TicketPurchase, Artwork, DonationRecord } from '../types';
 import { StorageService } from '../services/storage';
 import { downloadICSFile, generateGoogleCalendarUrl } from '../services/calendarSync';
 import { audioSynth } from '../services/audioSynthesizer';
+import { cancelEventReservation } from '../services/eventsService';
 import { auth, db } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -16,7 +17,10 @@ import {
   Clock, 
   MapPin,
   LogOut,
-  ArrowRight
+  ArrowRight,
+  AlertCircle,
+  Ban,
+  RefreshCw
 } from 'lucide-react';
 
 interface MemberDashboardProps {
@@ -46,6 +50,8 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
   const [allArtworks, setAllArtworks] = useState<Artwork[]>([]);
   const [activeSubTab, setActiveSubTab] = useState<'passes' | 'donations'>('passes');
   const [copiedPassId, setCopiedPassId] = useState<string | null>(null);
+  const [cancellingPassId, setCancellingPassId] = useState<string | null>(null);
+  const [paidPolicyAlertId, setPaidPolicyAlertId] = useState<string | null>(null);
 
   // Format username nicely: e.g. "rayan" -> "Rayan", "sourav-ganguly" -> "Sourav Ganguly"
   const formattedUsername = profileUsername 
@@ -246,6 +252,42 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
     window.open(url, '_blank');
   };
 
+  const handleCancelReservation = async (pass: any) => {
+    const passTitle = pass.eventTitle || pass.title || 'this gathering';
+    const isConfirmed = window.confirm(
+      `Relinquish Pass Reservation:\n\nAre you sure you wish to cancel your complimentary reservation for "${passTitle}"?\n\nYour seat will immediately be returned to the collective sanctuary capacity for fellow artists.`
+    );
+    if (!isConfirmed) return;
+
+    audioSynth.playChime();
+    const passId = pass.id || pass.ticketCode || pass.code;
+    setCancellingPassId(passId);
+
+    try {
+      const activeUid = auth.currentUser?.uid || (currentUser?.id && !currentUser.id.startsWith('usr-') ? currentUser.id : null);
+      if (activeUid) {
+        await cancelEventReservation(pass, activeUid);
+      } else {
+        // Fallback for local prototype
+        const allTix = StorageService.getTickets();
+        const updatedTix = allTix.map(t => (t.id === passId || t.ticketCode === pass.ticketCode) ? { ...t, status: 'cancelled' as any } : t);
+        StorageService.saveTickets(updatedTix);
+        const evts = StorageService.getEvents();
+        const evtIdx = evts.findIndex(e => e.id === pass.eventId);
+        if (evtIdx !== -1) {
+          const count = pass.ticketCount || 1;
+          evts[evtIdx].availableTickets = Math.min(evts[evtIdx].capacity, (evts[evtIdx].availableTickets || 0) + count);
+          StorageService.saveEvents(evts);
+        }
+      }
+    } catch (err: any) {
+      console.error('Cancellation failed:', err);
+      alert(err.message || 'Unable to cancel reservation at this moment.');
+    } finally {
+      setCancellingPassId(null);
+    }
+  };
+
   const handleLogout = async () => {
     audioSynth.playChime();
     try {
@@ -376,19 +418,31 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
                 const passVenue = pass.eventVenue || pass.venue || 'Kshestra Main Stage';
                 const passName = pass.buyerName || pass.name || displayName;
                 const passSeats = pass.ticketCount || pass.count || 1;
+                const isPaidPass = Boolean(pass.isPaid || (pass.totalAmount && pass.totalAmount > 0) || (pass.price && pass.price > 0));
+                const isCancelled = pass.status === 'cancelled';
+                const isCancellingThis = cancellingPassId === passId;
 
                 return (
                   <div
                     key={passId}
-                    className="rounded-xs bg-[#FFFFFF] border border-[#3A2B27]/15 p-6 space-y-4 shadow-xs flex flex-col justify-between"
+                    className={`rounded-xs bg-[#FFFFFF] border p-6 space-y-4 shadow-xs flex flex-col justify-between transition-all ${
+                      isCancelled ? 'border-[#3A2B27]/10 opacity-70 bg-[#FFF5E9]/50' : 'border-[#3A2B27]/15'
+                    }`}
                   >
                     <div className="space-y-3">
                       <div className="flex items-start justify-between border-b border-[#3A2B27]/10 pb-3">
                         <div>
-                          <span className="text-[10px] font-mono uppercase text-[#471319] font-bold">
-                            Digital Entry Pass
-                          </span>
-                          <h4 className="font-gambetta text-lg font-bold text-[#3A2B27]">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-mono uppercase text-[#471319] font-bold">
+                              Digital Entry Pass
+                            </span>
+                            <span className={`text-[9px] font-mono uppercase px-1.5 py-0.5 rounded-2xs font-semibold ${
+                              isPaidPass ? 'bg-[#3A2B27]/10 text-[#3A2B27]' : 'bg-[#8A8E3E]/20 text-[#471319]'
+                            }`}>
+                              {isPaidPass ? 'Paid Pass' : 'Free RSVP'}
+                            </span>
+                          </div>
+                          <h4 className={`font-gambetta text-lg font-bold text-[#3A2B27] ${isCancelled ? 'line-through text-[#725C54]' : ''}`}>
                             {passTitle}
                           </h4>
                         </div>
@@ -415,29 +469,82 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({
                         </div>
                         <div className="text-right">
                           <span className="text-[#725C54] block text-[10px]">Pass Status</span>
-                          <span className="font-bold text-[#8A8E3E] uppercase">Confirmed</span>
+                          <span className={`font-bold uppercase ${isCancelled ? 'text-[#471319]' : 'text-[#8A8E3E]'}`}>
+                            {isCancelled ? 'Released' : 'Confirmed'}
+                          </span>
                         </div>
                       </div>
+
+                      {/* Policy Notice for Paid Passes */}
+                      {paidPolicyAlertId === passId && (
+                        <div className="p-2.5 bg-[#471319]/10 border border-[#471319]/20 rounded-xs text-[11px] text-[#3A2B27] flex items-start gap-2">
+                          <AlertCircle className="w-3.5 h-3.5 text-[#471319] shrink-0 mt-0.5" />
+                          <div className="space-y-0.5">
+                            <strong className="block font-mono text-[10px] text-[#471319] uppercase">Kshestra Policy</strong>
+                            <span>Paid entry passes support sanctum operations and resident artists. They are strictly non-refundable and non-cancellable.</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Pass Actions: Calendar & ICS */}
-                    <div className="pt-3 border-t border-[#3A2B27]/10 flex gap-2">
-                      <button
-                        onClick={() => handleGoogleCalendar(pass)}
-                        data-cursor="pointer"
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold rounded-xs bg-[#F6EADB] text-[#3A2B27] hover:bg-[#EBE2D4] transition-colors"
-                      >
-                        <CalendarPlus className="w-3.5 h-3.5 text-[#471319]" />
-                        <span>Google Cal</span>
-                      </button>
-                      <button
-                        onClick={() => handleDownloadICS(pass)}
-                        data-cursor="pointer"
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold rounded-xs bg-[#FFF5E9] text-[#3A2B27] hover:bg-[#F6EADB] border border-[#3A2B27]/15 transition-colors"
-                      >
-                        <Download className="w-3.5 h-3.5 text-[#8A8E3E]" />
-                        <span>{copiedPassId === passId ? 'Exported!' : 'Apple / Outlook .ICS'}</span>
-                      </button>
+                    {/* Pass Actions: Calendar & ICS & Cancellation */}
+                    <div className="pt-3 border-t border-[#3A2B27]/10 space-y-2">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleGoogleCalendar(pass)}
+                          disabled={isCancelled}
+                          data-cursor="pointer"
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold rounded-xs bg-[#F6EADB] text-[#3A2B27] hover:bg-[#EBE2D4] transition-colors disabled:opacity-40"
+                        >
+                          <CalendarPlus className="w-3.5 h-3.5 text-[#471319]" />
+                          <span>Google Cal</span>
+                        </button>
+                        <button
+                          onClick={() => handleDownloadICS(pass)}
+                          disabled={isCancelled}
+                          data-cursor="pointer"
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold rounded-xs bg-[#FFF5E9] text-[#3A2B27] hover:bg-[#F6EADB] border border-[#3A2B27]/15 transition-colors disabled:opacity-40"
+                        >
+                          <Download className="w-3.5 h-3.5 text-[#8A8E3E]" />
+                          <span>{copiedPassId === passId ? 'Exported!' : 'Apple / Outlook'}</span>
+                        </button>
+                      </div>
+
+                      {/* Reservation Management */}
+                      {isOwner && !isCancelled && (
+                        <div>
+                          {!isPaidPass ? (
+                            <button
+                              type="button"
+                              onClick={() => handleCancelReservation(pass)}
+                              disabled={isCancellingThis}
+                              data-cursor="pointer"
+                              className="w-full py-1.5 text-[10px] font-mono uppercase tracking-wider text-[#471319] hover:bg-[#471319]/10 rounded-xs border border-[#471319]/20 transition-colors flex items-center justify-center gap-1.5"
+                            >
+                              {isCancellingThis ? (
+                                <>
+                                  <RefreshCw className="w-3 h-3 animate-spin" />
+                                  <span>Relinquishing Pass...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Ban className="w-3 h-3" />
+                                  <span>Cancel Reservation (Release Seat)</span>
+                                </>
+                              )}
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => setPaidPolicyAlertId(paidPolicyAlertId === passId ? null : passId)}
+                              className="w-full py-1.5 text-[10px] font-mono uppercase tracking-wider text-[#725C54] hover:text-[#3A2B27] rounded-xs border border-[#3A2B27]/10 hover:border-[#3A2B27]/30 transition-colors flex items-center justify-center gap-1.5"
+                            >
+                              <AlertCircle className="w-3 h-3 text-[#725C54]" />
+                              <span>Paid Entry · Non-Refundable Policy</span>
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );

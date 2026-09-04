@@ -3,6 +3,8 @@ import { EventItem, TicketPurchase, DonationRecord } from '../types';
 import { StorageService } from '../services/storage';
 import { generateGoogleCalendarUrl, downloadICSFile } from '../services/calendarSync';
 import { audioSynth } from '../services/audioSynthesizer';
+import { auth } from '../firebase';
+import { bookEventPass } from '../services/eventsService';
 import { 
   X, 
   ShieldCheck, 
@@ -15,7 +17,9 @@ import {
   CreditCard,
   Sparkles,
   ArrowRight,
-  FileCheck
+  FileCheck,
+  AlertCircle,
+  LogIn
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -28,6 +32,7 @@ interface RazorpayModalProps {
   donationTierName?: string;
   onClose: () => void;
   onSuccess: (result: any) => void;
+  onOpenAuth?: (notice?: string) => void;
 }
 
 export const RazorpayModal: React.FC<RazorpayModalProps> = ({
@@ -36,29 +41,50 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
   donationAmount = 2500,
   donationTierName,
   onClose,
-  onSuccess
+  onSuccess,
+  onOpenAuth
 }) => {
   const currentUser = StorageService.getCurrentUser();
+  const firebaseUser = auth.currentUser;
 
   // Ticket Form State
   const [ticketCount, setTicketCount] = useState<number>(1);
-  const [buyerName, setBuyerName] = useState<string>(currentUser?.name || '');
-  const [buyerEmail, setBuyerEmail] = useState<string>(currentUser?.email || '');
+  const [buyerName, setBuyerName] = useState<string>(
+    currentUser?.name || firebaseUser?.displayName || ''
+  );
+  const [buyerEmail, setBuyerEmail] = useState<string>(
+    currentUser?.email || firebaseUser?.email || ''
+  );
   const [buyerPhone, setBuyerPhone] = useState<string>(currentUser?.phone || '+91 98301 22489');
 
   // Donation Form State
-  const [donorName, setDonorName] = useState<string>(currentUser?.name || '');
-  const [donorEmail, setDonorEmail] = useState<string>(currentUser?.email || '');
+  const [donorName, setDonorName] = useState<string>(
+    currentUser?.name || firebaseUser?.displayName || ''
+  );
+  const [donorEmail, setDonorEmail] = useState<string>(
+    currentUser?.email || firebaseUser?.email || ''
+  );
   const [panNumber, setPanNumber] = useState<string>('ABCDE1234F');
   const [request80G, setRequest80G] = useState<boolean>(true);
 
   // Status
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
   const [completedPurchase, setCompletedPurchase] = useState<TicketPurchase | null>(null);
   const [completedDonation, setCompletedDonation] = useState<DonationRecord | null>(null);
 
+  const isSoldOut = Boolean(
+    mode === 'ticket' && 
+    event && 
+    (
+      event.isSoldOut || 
+      (typeof event.availableSeats === 'number' && event.availableSeats <= 0) ||
+      (typeof event.availableTickets === 'number' && event.availableTickets <= 0)
+    )
+  );
+
   const totalAmount = mode === 'ticket' 
-    ? (event ? event.price * ticketCount : 0) 
+    ? (event ? (event.price || 0) * ticketCount : 0) 
     : donationAmount;
 
   const triggerConfetti = () => {
@@ -72,70 +98,106 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
     } catch {}
   };
 
-  const handleProcessPayment = () => {
+  const handleProcessPayment = async () => {
+    setBookingError(null);
+
+    if (isSoldOut) {
+      setBookingError('Gathering at Capacity');
+      return;
+    }
+
     if (!buyerName && !donorName) {
-      alert('Please provide your name for pass registration.');
+      setBookingError('Please provide your name for pass registration.');
       return;
     }
     if (!buyerEmail && !donorEmail) {
-      alert('Please provide your email address for dispatch notifications.');
+      setBookingError('Please provide your email address for dispatch notifications.');
       return;
+    }
+
+    if (mode === 'ticket' && event) {
+      // Gate check: Verified auth
+      const currentFb = auth.currentUser;
+      if (!currentFb || !currentFb.uid) {
+        setBookingError('Official record-keeping requires verified membership. Please authenticate using Google or Email to secure gathering passes.');
+        return;
+      }
+
+      if (currentFb.email === 'resident@kshestra.com' || currentFb.uid.startsWith('usr-')) {
+        setBookingError('Instant Resident Creator Session is available for exploring the prototype, but cannot be used to decrement live sanctuary capacity. Please authenticate using Google or Email to secure gathering passes.');
+        return;
+      }
     }
 
     setIsProcessing(true);
     audioSynth.playChime();
 
-    setTimeout(() => {
-      const paymentId = 'pay_RPZ' + Math.floor(100000000 + Math.random() * 900000000);
+    if (mode === 'ticket' && event) {
+      try {
+        const { pass } = await bookEventPass(event, {
+          name: buyerName || 'Resident Creator',
+          email: buyerEmail || 'patron@kshestra.com',
+          phone: buyerPhone
+        });
 
-      if (mode === 'ticket' && event) {
-        const ticketCode = `KSH-${event.category.substring(0, 3).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
         const newTicket: TicketPurchase = {
-          id: `tkt-${Date.now()}`,
+          id: pass.id,
           eventId: event.id,
           eventTitle: event.title,
           eventDate: event.date,
           eventTime: event.time,
           eventVenue: `${event.venue}, ${event.city}`,
-          buyerName: buyerName || currentUser?.name || 'Sanctum Patron',
-          buyerEmail: buyerEmail || currentUser?.email || 'patron@kshestra.com',
+          buyerName: pass.buyerName || buyerName,
+          buyerEmail: pass.buyerEmail || buyerEmail,
           buyerPhone,
           ticketCount,
           totalAmount,
-          purchaseDate: new Date().toISOString().split('T')[0],
-          ticketCode,
-          qrData: `KSHESTRA-PASS:${ticketCode}|NAME:${buyerName}|EVT:${event.id}`,
-          paymentId,
+          purchaseDate: pass.purchaseDate || new Date().toISOString().split('T')[0],
+          ticketCode: pass.ticketCode || 'KSH-PASS',
+          qrData: `KSHESTRA-PASS:${pass.ticketCode}|NAME:${buyerName}|EVT:${event.id}`,
+          paymentId: pass.id,
           status: 'confirmed'
         };
 
-        StorageService.issueTicket(newTicket);
         setCompletedPurchase(newTicket);
         setIsProcessing(false);
         triggerConfetti();
         onSuccess(newTicket);
-      } else {
-        const newDonation: DonationRecord = {
-          id: `don-${Date.now()}`,
-          donorName: donorName || currentUser?.name || 'Sanctum Patron',
-          donorEmail: donorEmail || currentUser?.email || 'patron@kshestra.com',
-          amount: totalAmount,
-          currency: 'INR',
-          tierName: donationTierName || `Sanctum Contribution (₹${totalAmount})`,
-          date: new Date().toISOString().split('T')[0],
-          is80GRequested: request80G,
-          panNumber: request80G ? panNumber : undefined,
-          paymentId,
-          status: 'completed'
-        };
-
-        StorageService.recordDonation(newDonation);
-        setCompletedDonation(newDonation);
+      } catch (err: any) {
         setIsProcessing(false);
-        triggerConfetti();
-        onSuccess(newDonation);
+        const msg = err?.message || 'Failed to complete reservation';
+        if (msg.includes('Gathering at Capacity')) {
+          setBookingError('Gathering at Capacity');
+        } else {
+          setBookingError(msg);
+        }
       }
-    }, 1200);
+      return;
+    }
+
+    // Donation Flow
+    setTimeout(() => {
+      const paymentId = 'pay_RPZ' + Math.floor(100000000 + Math.random() * 900000000);
+      const newDonation: DonationRecord = {
+        id: `don-${Date.now()}`,
+        donorName: donorName || currentUser?.name || 'Sanctum Patron',
+        donorEmail: donorEmail || currentUser?.email || 'patron@kshestra.com',
+        amount: totalAmount,
+        currency: 'INR',
+        tierName: donationTierName || `Sanctum Contribution (₹${totalAmount})`,
+        date: new Date().toISOString().split('T')[0],
+        is80GRequested: request80G,
+        panNumber: request80G ? panNumber : undefined,
+        paymentId,
+        status: 'completed'
+      };
+
+      StorageService.recordDonation(newDonation);
+      setCompletedDonation(newDonation);
+      setIsProcessing(false);
+      triggerConfetti();
+      onSuccess(newDonation);
+    }, 900);
   };
 
   return (
@@ -309,6 +371,38 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
 
               {/* User Details */}
               <div className="space-y-3">
+                {/* Booking Notice / Error Banner */}
+                {bookingError && (
+                  <div className="bg-[#471319]/10 border border-[#471319]/30 rounded-sm p-3.5 space-y-2 text-xs text-[#3A2B27]">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0 text-[#471319] mt-0.5" />
+                      <div className="space-y-1">
+                        <span className="font-mono text-[10px] uppercase font-bold text-[#471319] tracking-wider block">
+                          Reservation Notice
+                        </span>
+                        <p className="font-sans leading-relaxed text-[#3A2B27]">
+                          {bookingError}
+                        </p>
+                      </div>
+                    </div>
+                    {onOpenAuth && bookingError.includes('verified membership') && (
+                      <div className="pt-1 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onOpenAuth(bookingError);
+                            onClose();
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#471319] text-[#FFF5E9] font-mono text-[10px] uppercase font-bold tracking-wider rounded-xs hover:bg-[#3A2B27] transition-colors"
+                        >
+                          <LogIn className="w-3 h-3" />
+                          <span>Authenticate with Google / Email</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div className="space-y-1">
                   <label className="text-[11px] font-mono uppercase tracking-wider text-[#725C54] block">
                     Full Name
@@ -344,7 +438,8 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
                       <select
                         value={ticketCount}
                         onChange={(e) => setTicketCount(parseInt(e.target.value, 10))}
-                        className="px-3.5 py-2.5 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#471319] focus:outline-none"
+                        disabled={isSoldOut}
+                        className="px-3.5 py-2.5 text-xs bg-[#FFFFFF] border border-[#3A2B27]/20 rounded-sm focus:border-[#471319] focus:outline-none disabled:opacity-50"
                       >
                         <option value={1}>1 Seat {event.price > 0 ? `(₹${event.price * 1})` : '(Free Pass)'}</option>
                         <option value={2}>2 Seats {event.price > 0 ? `(₹${event.price * 2})` : '(Free Pass)'}</option>
@@ -371,12 +466,18 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
               {/* Action Button */}
               <button
                 onClick={handleProcessPayment}
-                disabled={isProcessing}
+                disabled={isProcessing || isSoldOut}
                 data-cursor="pointer"
-                className="w-full py-3.5 text-xs font-bold uppercase tracking-wider rounded-sm bg-[#471319] hover:bg-[#471319] text-[#FFF5E9] border border-[#3A2B27]/20 transition-all shadow-md flex items-center justify-center gap-2"
+                className={`w-full py-3.5 text-xs font-bold uppercase tracking-wider rounded-sm border transition-all shadow-md flex items-center justify-center gap-2 ${
+                  isSoldOut
+                    ? 'bg-[#3A2B27]/20 text-[#725C54] border-[#3A2B27]/20 cursor-not-allowed'
+                    : 'bg-[#471319] hover:bg-[#3A2B27] text-[#FFF5E9] border-[#3A2B27]/20'
+                }`}
               >
                 {isProcessing ? (
                   <span>Securing Reservation...</span>
+                ) : isSoldOut ? (
+                  <span>Gathering at Capacity</span>
                 ) : (
                   <>
                     <CreditCard className="w-4 h-4" />

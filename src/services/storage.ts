@@ -217,6 +217,14 @@ export const StorageService = {
     }
   },
 
+  saveTickets: (tickets: TicketPurchase[]) => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.TICKETS, JSON.stringify(tickets));
+    } catch {
+      // Graceful silent fallback
+    }
+  },
+
   issueTicket: (ticket: TicketPurchase) => {
     try {
       const existing = StorageService.getTickets();
